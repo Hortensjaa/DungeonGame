@@ -1,0 +1,122 @@
+{
+  "fitness" : 0.0,
+  "nodes" : [ {
+    "id" : 4,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.98326963,
+    "reward" : 0.9216562
+  }, {
+    "id" : 7,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.60246485,
+    "reward" : 0.6687785
+  }, {
+    "id" : 5,
+    "type" : "Enemies",
+    "difficulty" : 0.7725868,
+    "reward" : 0.0
+  }, {
+    "id" : 1,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.7507229
+  }, {
+    "id" : 9,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.39385584,
+    "reward" : 0.9084047
+  }, {
+    "id" : 12,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.96041656,
+    "reward" : 0.8511973
+  }, {
+    "id" : 11,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.94428295,
+    "reward" : 0.8278854
+  }, {
+    "id" : 13,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.94273174,
+    "reward" : 0.9593901
+  }, {
+    "id" : 2,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.5757145,
+    "reward" : 0.8528705
+  }, {
+    "id" : 14,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 3,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.63688624,
+    "reward" : 0.58264744
+  }, {
+    "id" : 0,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.84211075,
+    "reward" : 0.82692105
+  }, {
+    "id" : 6,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9349384,
+    "reward" : 0.53998446
+  }, {
+    "id" : 8,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.8761631,
+    "reward" : 0.252482
+  }, {
+    "id" : 10,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.80849725,
+    "reward" : 0.8749502
+  } ],
+  "edges" : [ {
+    "from" : 4,
+    "to" : 8
+  }, {
+    "from" : 5,
+    "to" : 9
+  }, {
+    "from" : 5,
+    "to" : 10
+  }, {
+    "from" : 5,
+    "to" : 11
+  }, {
+    "from" : 1,
+    "to" : 3
+  }, {
+    "from" : 1,
+    "to" : 4
+  }, {
+    "from" : 9,
+    "to" : 13
+  }, {
+    "from" : 11,
+    "to" : 14
+  }, {
+    "from" : 2,
+    "to" : 5
+  }, {
+    "from" : 3,
+    "to" : 6
+  }, {
+    "from" : 3,
+    "to" : 7
+  }, {
+    "from" : 0,
+    "to" : 1
+  }, {
+    "from" : 0,
+    "to" : 2
+  }, {
+    "from" : 8,
+    "to" : 12
+  } ]
+}

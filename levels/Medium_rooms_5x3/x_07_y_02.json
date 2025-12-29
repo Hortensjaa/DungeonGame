@@ -1,0 +1,250 @@
+{
+  "fitness" : 0.4768074,
+  "nodes" : [ {
+    "id" : 6,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9224652,
+    "reward" : 0.74547786
+  }, {
+    "id" : 29,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 27,
+    "type" : "Enemies",
+    "difficulty" : 0.9739755,
+    "reward" : 0.0
+  }, {
+    "id" : 22,
+    "type" : "Exit",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 16,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.7898272,
+    "reward" : 0.95281786
+  }, {
+    "id" : 20,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.15389404
+  }, {
+    "id" : 11,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 14,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9319519,
+    "reward" : 0.8322643
+  }, {
+    "id" : 26,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.8863977,
+    "reward" : 0.13486676
+  }, {
+    "id" : 0,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9224652,
+    "reward" : 0.74547786
+  }, {
+    "id" : 1,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.7148059,
+    "reward" : 0.40239567
+  }, {
+    "id" : 21,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 10,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9417232,
+    "reward" : 0.8210969
+  }, {
+    "id" : 30,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 24,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.65261394,
+    "reward" : 0.59301245
+  }, {
+    "id" : 3,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.802676,
+    "reward" : 0.872731
+  }, {
+    "id" : 25,
+    "type" : "Start",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 2,
+    "type" : "Enemies",
+    "difficulty" : 0.59844476,
+    "reward" : 0.0
+  }, {
+    "id" : 13,
+    "type" : "Enemies",
+    "difficulty" : 0.89662546,
+    "reward" : 0.0
+  }, {
+    "id" : 15,
+    "type" : "Enemies",
+    "difficulty" : 0.5048622,
+    "reward" : 0.0
+  }, {
+    "id" : 17,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.7898272,
+    "reward" : 0.95281786
+  }, {
+    "id" : 18,
+    "type" : "Enemies",
+    "difficulty" : 0.85211664,
+    "reward" : 0.0
+  }, {
+    "id" : 7,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.4417458
+  }, {
+    "id" : 28,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.51557434,
+    "reward" : 0.49494106
+  }, {
+    "id" : 4,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9224652,
+    "reward" : 0.74547786
+  }, {
+    "id" : 19,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.7898272,
+    "reward" : 0.95281786
+  }, {
+    "id" : 9,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 12,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.6668994,
+    "reward" : 0.46145275
+  }, {
+    "id" : 8,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.6952975,
+    "reward" : 0.8080589
+  }, {
+    "id" : 23,
+    "type" : "Enemies",
+    "difficulty" : 0.5772556,
+    "reward" : 0.0
+  }, {
+    "id" : 5,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.32330456
+  } ],
+  "edges" : [ {
+    "from" : 6,
+    "to" : 11
+  }, {
+    "from" : 6,
+    "to" : 12
+  }, {
+    "from" : 6,
+    "to" : 13
+  }, {
+    "from" : 29,
+    "to" : 30
+  }, {
+    "from" : 16,
+    "to" : 23
+  }, {
+    "from" : 11,
+    "to" : 17
+  }, {
+    "from" : 14,
+    "to" : 19
+  }, {
+    "from" : 14,
+    "to" : 20
+  }, {
+    "from" : 26,
+    "to" : 29
+  }, {
+    "from" : 0,
+    "to" : 1
+  }, {
+    "from" : 0,
+    "to" : 2
+  }, {
+    "from" : 0,
+    "to" : 3
+  }, {
+    "from" : 1,
+    "to" : 4
+  }, {
+    "from" : 1,
+    "to" : 5
+  }, {
+    "from" : 21,
+    "to" : 27
+  }, {
+    "from" : 3,
+    "to" : 7
+  }, {
+    "from" : 2,
+    "to" : 6
+  }, {
+    "from" : 15,
+    "to" : 21
+  }, {
+    "from" : 15,
+    "to" : 22
+  }, {
+    "from" : 17,
+    "to" : 24
+  }, {
+    "from" : 18,
+    "to" : 25
+  }, {
+    "from" : 7,
+    "to" : 14
+  }, {
+    "from" : 7,
+    "to" : 15
+  }, {
+    "from" : 4,
+    "to" : 8
+  }, {
+    "from" : 4,
+    "to" : 9
+  }, {
+    "from" : 4,
+    "to" : 10
+  }, {
+    "from" : 19,
+    "to" : 26
+  }, {
+    "from" : 12,
+    "to" : 18
+  }, {
+    "from" : 8,
+    "to" : 16
+  }, {
+    "from" : 23,
+    "to" : 28
+  } ]
+}

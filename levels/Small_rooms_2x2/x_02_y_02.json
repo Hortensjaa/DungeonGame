@@ -1,0 +1,410 @@
+{
+  "fitness" : 0.28669643,
+  "nodes" : [ {
+    "id" : 41,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.049089763,
+    "reward" : 0.7959811
+  }, {
+    "id" : 30,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.83164865
+  }, {
+    "id" : 9,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.5655824,
+    "reward" : 0.9214761
+  }, {
+    "id" : 25,
+    "type" : "Enemies",
+    "difficulty" : 0.13117102,
+    "reward" : 0.0
+  }, {
+    "id" : 44,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.1418904
+  }, {
+    "id" : 45,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.44563,
+    "reward" : 0.3160575
+  }, {
+    "id" : 21,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.51349276
+  }, {
+    "id" : 13,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.36720783,
+    "reward" : 0.34543505
+  }, {
+    "id" : 32,
+    "type" : "Enemies",
+    "difficulty" : 0.6639821,
+    "reward" : 0.0
+  }, {
+    "id" : 47,
+    "type" : "Enemies",
+    "difficulty" : 0.061647486,
+    "reward" : 0.0
+  }, {
+    "id" : 35,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.60474944,
+    "reward" : 0.43305084
+  }, {
+    "id" : 33,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 6,
+    "type" : "Enemies",
+    "difficulty" : 0.8074228,
+    "reward" : 0.0
+  }, {
+    "id" : 22,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.31935015
+  }, {
+    "id" : 37,
+    "type" : "Enemies",
+    "difficulty" : 0.7000353,
+    "reward" : 0.0
+  }, {
+    "id" : 36,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.22330973
+  }, {
+    "id" : 23,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.98734915
+  }, {
+    "id" : 27,
+    "type" : "Enemies",
+    "difficulty" : 0.83635867,
+    "reward" : 0.0
+  }, {
+    "id" : 14,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.6528162
+  }, {
+    "id" : 0,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.84211075,
+    "reward" : 0.82692105
+  }, {
+    "id" : 5,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.73880434,
+    "reward" : 0.9186793
+  }, {
+    "id" : 10,
+    "type" : "Enemies",
+    "difficulty" : 0.5570205,
+    "reward" : 0.0
+  }, {
+    "id" : 12,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.9256837
+  }, {
+    "id" : 1,
+    "type" : "Enemies",
+    "difficulty" : 0.24421853,
+    "reward" : 0.0
+  }, {
+    "id" : 3,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.96041656,
+    "reward" : 0.8511973
+  }, {
+    "id" : 50,
+    "type" : "Enemies",
+    "difficulty" : 0.66843057,
+    "reward" : 0.0
+  }, {
+    "id" : 28,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 4,
+    "type" : "Enemies",
+    "difficulty" : 0.69637305,
+    "reward" : 0.0
+  }, {
+    "id" : 24,
+    "type" : "Start",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 16,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.955528
+  }, {
+    "id" : 34,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.522369
+  }, {
+    "id" : 39,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 31,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.4469236,
+    "reward" : 0.7015441
+  }, {
+    "id" : 20,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 38,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.878682,
+    "reward" : 0.24181893
+  }, {
+    "id" : 42,
+    "type" : "Enemies",
+    "difficulty" : 0.027153354,
+    "reward" : 0.0
+  }, {
+    "id" : 15,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.7990791
+  }, {
+    "id" : 8,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.068849675,
+    "reward" : 0.43360248
+  }, {
+    "id" : 48,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.49414712
+  }, {
+    "id" : 7,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 49,
+    "type" : "Exit",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 11,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.24243754,
+    "reward" : 0.67920816
+  }, {
+    "id" : 18,
+    "type" : "Enemies",
+    "difficulty" : 0.5838658,
+    "reward" : 0.0
+  }, {
+    "id" : 46,
+    "type" : "Enemies",
+    "difficulty" : 0.54430944,
+    "reward" : 0.0
+  }, {
+    "id" : 40,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.37516135
+  }, {
+    "id" : 43,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 19,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.4412044
+  }, {
+    "id" : 26,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.6502392
+  }, {
+    "id" : 2,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.47508165,
+    "reward" : 0.06365933
+  }, {
+    "id" : 17,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.27276292
+  }, {
+    "id" : 29,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.2544474
+  } ],
+  "edges" : [ {
+    "from" : 41,
+    "to" : 46
+  }, {
+    "from" : 30,
+    "to" : 38
+  }, {
+    "from" : 9,
+    "to" : 13
+  }, {
+    "from" : 25,
+    "to" : 33
+  }, {
+    "from" : 25,
+    "to" : 34
+  }, {
+    "from" : 44,
+    "to" : 49
+  }, {
+    "from" : 44,
+    "to" : 50
+  }, {
+    "from" : 21,
+    "to" : 29
+  }, {
+    "from" : 13,
+    "to" : 17
+  }, {
+    "from" : 13,
+    "to" : 18
+  }, {
+    "from" : 32,
+    "to" : 40
+  }, {
+    "from" : 32,
+    "to" : 41
+  }, {
+    "from" : 33,
+    "to" : 42
+  }, {
+    "from" : 6,
+    "to" : 10
+  }, {
+    "from" : 22,
+    "to" : 30
+  }, {
+    "from" : 36,
+    "to" : 43
+  }, {
+    "from" : 36,
+    "to" : 44
+  }, {
+    "from" : 23,
+    "to" : 31
+  }, {
+    "from" : 27,
+    "to" : 35
+  }, {
+    "from" : 14,
+    "to" : 19
+  }, {
+    "from" : 14,
+    "to" : 20
+  }, {
+    "from" : 0,
+    "to" : 1
+  }, {
+    "from" : 0,
+    "to" : 2
+  }, {
+    "from" : 0,
+    "to" : 3
+  }, {
+    "from" : 10,
+    "to" : 14
+  }, {
+    "from" : 12,
+    "to" : 16
+  }, {
+    "from" : 1,
+    "to" : 4
+  }, {
+    "from" : 1,
+    "to" : 5
+  }, {
+    "from" : 3,
+    "to" : 7
+  }, {
+    "from" : 3,
+    "to" : 8
+  }, {
+    "from" : 28,
+    "to" : 36
+  }, {
+    "from" : 28,
+    "to" : 37
+  }, {
+    "from" : 4,
+    "to" : 9
+  }, {
+    "from" : 24,
+    "to" : 32
+  }, {
+    "from" : 16,
+    "to" : 22
+  }, {
+    "from" : 16,
+    "to" : 23
+  }, {
+    "from" : 39,
+    "to" : 45
+  }, {
+    "from" : 31,
+    "to" : 39
+  }, {
+    "from" : 42,
+    "to" : 47
+  }, {
+    "from" : 15,
+    "to" : 21
+  }, {
+    "from" : 7,
+    "to" : 11
+  }, {
+    "from" : 7,
+    "to" : 12
+  }, {
+    "from" : 11,
+    "to" : 15
+  }, {
+    "from" : 43,
+    "to" : 48
+  }, {
+    "from" : 19,
+    "to" : 27
+  }, {
+    "from" : 19,
+    "to" : 28
+  }, {
+    "from" : 2,
+    "to" : 6
+  }, {
+    "from" : 17,
+    "to" : 24
+  }, {
+    "from" : 17,
+    "to" : 25
+  }, {
+    "from" : 17,
+    "to" : 26
+  } ]
+}
