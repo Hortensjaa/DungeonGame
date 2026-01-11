@@ -8,18 +8,20 @@ import io.github.dungeon.dungeon_game.DungeonGame;
 import io.github.dungeon.generator.GenerationUtils;
 import io.github.dungeon.generator.grid.GridDefinition;
 import io.github.dungeon.render.DungeonRenderer;
+import io.github.dungeon.render.UIRenderer;
 
 public class DungeonScreen implements Screen, InputProcessor {
 
     private final DungeonGame game;
+    private final UIRenderer uiRenderer;
     private final DungeonRenderer renderer;
     private Action currentAction = Action.STAY;
 
     public DungeonScreen(Game gdxGame) {
-        GridDefinition def = GenerationUtils.generateFromFile("Large_rooms_8x6", 5, 5);
+        GridDefinition def = GenerationUtils.generateFromFile("Large_rooms_8x6", 4, 5);
         this.game = new DungeonGame(def);
         this.renderer = new DungeonRenderer(game);
-
+        this.uiRenderer = new UIRenderer(game.getPlayer());
         Gdx.input.setInputProcessor(this);
     }
 
@@ -36,8 +38,9 @@ public class DungeonScreen implements Screen, InputProcessor {
         } else {
             game.getPlayer().setLastAction(Action.STAY);
         }
-        game.update(delta);          // logic
+        game.update(delta);      // logic
         renderer.render();      // drawing
+        uiRenderer.render();    // UI (bars, score)
     }
 
     @Override
@@ -72,6 +75,7 @@ public class DungeonScreen implements Screen, InputProcessor {
         if (keycode == Input.Keys.W || keycode == Input.Keys.UP) currentAction = Action.DOWN;
         if (keycode == Input.Keys.A || keycode == Input.Keys.LEFT) currentAction = Action.LEFT;
         if (keycode == Input.Keys.D || keycode == Input.Keys.RIGHT) currentAction = Action.RIGHT;
+        if (keycode == Input.Keys.ESCAPE) Gdx.app.exit();
         return true;
     }
 

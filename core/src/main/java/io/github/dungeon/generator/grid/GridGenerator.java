@@ -4,8 +4,8 @@ package io.github.dungeon.generator.grid;
 import io.github.dungeon.common.Constants;
 import io.github.dungeon.common.Coord;
 import io.github.dungeon.common.Direction;
-import io.github.dungeon.dungeon_game.game_objects.EnemyType;
-import io.github.dungeon.dungeon_game.game_objects.RewardType;
+import io.github.dungeon.dungeon_game.danger.DangerType;
+import io.github.dungeon.dungeon_game.reward.RewardType;
 import io.github.dungeon.generator.tree.DungeonTree;
 import io.github.dungeon.generator.tree.DungeonTreeSerializer;
 import io.github.dungeon.generator.tree.NodeTypes;
@@ -22,7 +22,7 @@ public class GridGenerator extends Generator {
     private final LayoutField[][] layout; // The layout of the dungeon as a 2D array of fields
     private Coord playerStart; // The starting position of the player
     private Coord exitPoint; // The exit point of the dungeon
-    private final Map<Coord, EnemyType> enemies = new HashMap<>(); // Map of enemy positions and their types
+    private final Map<Coord, DangerType> enemies = new HashMap<>(); // Map of enemy positions and their types
     private final Map<Coord, RewardType> rewards = new HashMap<>(); // Map of rewards positions and their types
     private int[][] grid; // The grid representation of the dungeon
 
@@ -94,7 +94,7 @@ public class GridGenerator extends Generator {
 
         int i = 0;
         while (i < enemyCount) {
-            EnemyType type = EnemyType.getRandom();
+            DangerType type = DangerType.getRandom();
             enemies.put(picks.get(i), type);
             i += type.getSeverity();
         }
@@ -167,7 +167,7 @@ public class GridGenerator extends Generator {
             // move x to the side -> x1
             int x1 = x
                 + (int)(Math.random()
-                * (partitionWidth - 1 - Constants.CORRIDOR_WIDTH) * 0.5f)
+                * (partitionWidth - 2 * Constants.CORRIDOR_WIDTH) * 0.5f)
                 * (Math.random() > 0.5 ? 1 : -1);
             while (x != x1) {
                 carveCorridorTile(x, y, direction.perpendicular());
@@ -189,7 +189,7 @@ public class GridGenerator extends Generator {
         } else {
             int y1 = y
                 + (int)(Math.random()
-                * (partitionHeight - 1 - Constants.CORRIDOR_WIDTH) * 0.5f)
+                * (partitionHeight - 2 * Constants.CORRIDOR_WIDTH) * 0.5f)
                 * (Math.random() > 0.5 ? 1 : -1);
             while (y != y1) {
                 carveCorridorTile(x, y, direction.perpendicular());
@@ -297,7 +297,7 @@ public class GridGenerator extends Generator {
                 .grid(generator.grid)
                 .playerStart(generator.playerStart)
                 .exit(generator.exitPoint)
-                .enemies(generator.enemies)
+                .dangers(generator.enemies)
                 .rewards(generator.rewards)
                 .build();
     }

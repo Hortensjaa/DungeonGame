@@ -1,19 +1,18 @@
 package io.github.dungeon.dungeon_game;
 
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import io.github.dungeon.common.Action;
 import io.github.dungeon.common.Constants;
 import io.github.dungeon.common.Coord;
-import io.github.dungeon.common.Direction;
-import io.github.dungeon.dungeon_game.game_objects.Enemy;
+import io.github.dungeon.dungeon_game.danger.Enemy;
+import io.github.dungeon.dungeon_game.danger.Trap;
 import io.github.dungeon.dungeon_game.game_objects.GameObject;
-import io.github.dungeon.dungeon_game.game_objects.Player;
-import io.github.dungeon.dungeon_game.game_objects.Reward;
+import io.github.dungeon.dungeon_game.game_objects.Interactable;
+import io.github.dungeon.dungeon_game.reward.Reward;
 import io.github.dungeon.generator.grid.GridDefinition;
 import lombok.Getter;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,21 +23,25 @@ public class DungeonGame {
     private final int[][] grid;
     private final Player player;
     private final Coord exit;
-    private final List<Enemy> enemies;
-    private final List<Reward> rewards;
+    private final List<Interactable> interactables;
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
         this.player = new Player(def.getPlayerStart());
         this.exit = def.getExit();
-        this.enemies = def.getEnemies().entrySet()
+        this.interactables = def.getDangers().entrySet()
                 .stream()
-                .map(entry -> new Enemy(entry.getValue(), entry.getKey()))
+                .map(entry -> {
+                    if (entry.getValue().isMoving()) {
+                        return new Enemy(entry.getValue(), entry.getKey());
+                    } else {
+                        return new Trap(entry.getValue(), entry.getKey());
+                    }
+                })
                 .collect(Collectors.toList());
-        this.rewards = def.getRewards().entrySet()
-                .stream()
-                .map(entry -> new Reward(entry.getValue(), entry.getKey()))
-                .collect(Collectors.toList());
+        interactables.addAll(def.getRewards().entrySet().stream().map(
+            entry -> new Reward(entry.getValue(), entry.getKey())
+        ).toList());
     }
 
     public boolean move(Action action) {
@@ -55,24 +58,26 @@ public class DungeonGame {
         player.update(delta);
         Coord playerPos = player.getPosition();
 
-        rewards.removeIf(reward -> {
-            reward.update(delta);
-            if (reward.getPosition().equals(playerPos)) {
-                reward.applyEffect(player);
-                return true;
-            }
-            return false;
-        });
+        Iterator<Interactable> it = interactables.iterator();
 
-        for (Enemy enemy : enemies) {
-            enemy.update(delta);
-            Coord next = enemy.move(enemy.getAction());
-            if (isOutOfBounds(enemy) || collidesWithWall(enemy)) {
-                enemy.undoMove();
-                enemy.setAction(enemy.getAction().opposite());
+        while (it.hasNext()) {
+            Interactable obj = it.next();
+            obj.update(delta);
+
+            if (obj instanceof Enemy enemy) {
+                Coord next = enemy.move(enemy.getAction());
+                if (isOutOfBounds(enemy) || collidesWithWall(enemy)) {
+                    enemy.undoMove();
+                    enemy.setAction(enemy.getAction().opposite());
+                }
             }
-            if (enemy.getPosition().equals(playerPos)) {
-                enemy.attack(player);
+
+            if (obj.getPosition().equals(playerPos)) {
+                obj.onInteraction(player);
+
+                if (obj instanceof Trap || obj instanceof Reward) {
+                    it.remove();
+                }
             }
         }
 

@@ -4,22 +4,26 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.dungeon.common.Constants;
 import io.github.dungeon.common.Coord;
 import io.github.dungeon.dungeon_game.DungeonGame;
-import io.github.dungeon.dungeon_game.game_objects.Enemy;
-import io.github.dungeon.dungeon_game.game_objects.Reward;
+import io.github.dungeon.dungeon_game.danger.Enemy;
+import io.github.dungeon.dungeon_game.game_objects.Interactable;
+import io.github.dungeon.dungeon_game.reward.Reward;
 import lombok.Getter;
 
 import java.util.Map;
 
-public class DungeonRenderer {
+public class DungeonRenderer implements Disposable {
 
     private final DungeonGame game;
     private final SpriteBatch batch;
     @Getter private final OrthographicCamera camera;
-    @Getter private final FitViewport viewport;
+    @Getter private final ExtendViewport viewport;
 
     private final Map<Integer, Texture> gridTextures = Map.of(
         Constants.WALL, new Texture(Constants.WALL_SPRITE),
@@ -36,7 +40,7 @@ public class DungeonRenderer {
         camera.setToOrtho(false,
             Gdx.graphics.getWidth(),
             Gdx.graphics.getHeight());
-        viewport = new FitViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
+        viewport = new ExtendViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
         viewport.apply();
 
     }
@@ -56,8 +60,7 @@ public class DungeonRenderer {
 
         drawGrid();
         drawPlayer();
-        drawEnemies();
-        drawRewards();
+        drawInteractables();
 
         batch.end();
     }
@@ -78,23 +81,46 @@ public class DungeonRenderer {
 
     private void drawPlayer() {
         Coord p = game.getPlayer().getPosition();
-        Texture t = game.getPlayer().getCurrentTexture();
-        batch.draw(t, p.getX() * Constants.CELL_SIZE, p.getY() * Constants.CELL_SIZE);
+        batch.draw(
+            game.getPlayer().getCurrentFrame(),
+            p.getX() * Constants.CELL_SIZE,
+            p.getY() * Constants.CELL_SIZE,
+            Constants.CELL_SIZE,
+            Constants.CELL_SIZE
+        );
     }
 
-    private void drawEnemies() {
-        for (Enemy e : game.getEnemies()) {
+    private void drawInteractables() {
+        for (Interactable e : game.getInteractables()) {
             Coord c = e.getPosition();
-            Texture t = e.getCurrentTexture();
-            batch.draw(t, c.getX() * Constants.CELL_SIZE, c.getY() * Constants.CELL_SIZE);
-        }
-    }
+            TextureRegion t = e.getCurrentFrame();
 
-    private void drawRewards() {
-        for (Reward e : game.getRewards()) {
-            Coord c = e.getPosition();
-            Texture t = e.getCurrentTexture();
-            batch.draw(t, c.getX() * Constants.CELL_SIZE, c.getY() * Constants.CELL_SIZE);
+            float cellX = c.getX() * Constants.CELL_SIZE;
+            float cellY = c.getY() * Constants.CELL_SIZE;
+
+            int texW = t.getRegionWidth();
+            int texH = t.getRegionHeight();
+
+            float drawWidth;
+            float drawHeight;
+
+            float aspect = (float) texW / texH;
+            // fit
+            if (texW >= texH) {
+                drawWidth = Constants.CELL_SIZE;
+                drawHeight = Constants.CELL_SIZE / aspect;
+            } else {
+                drawHeight = Constants.CELL_SIZE;
+                drawWidth = Constants.CELL_SIZE * aspect;
+            }
+            // scale
+            drawWidth *= e.getScale();
+            drawHeight *= e.getScale();
+            // center
+            float drawX = cellX + (Constants.CELL_SIZE - drawWidth) / 2f;
+            float drawY = cellY + (Constants.CELL_SIZE - drawHeight) / 2f;
+
+            batch.draw(t, drawX, drawY, drawWidth, drawHeight);
         }
     }
 
@@ -102,11 +128,8 @@ public class DungeonRenderer {
         batch.dispose();
         game.getPlayer().dispose();
         goalTexture.dispose();
-        for (Enemy e : game.getEnemies()) {
+        for (Interactable e : game.getInteractables()) {
             e.dispose();
-        }
-        for (Reward r : game.getRewards()) {
-            r.dispose();
         }
         for (Texture t : gridTextures.values()) {
             t.dispose();

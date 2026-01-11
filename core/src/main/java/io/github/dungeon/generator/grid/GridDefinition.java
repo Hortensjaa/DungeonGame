@@ -3,8 +3,8 @@ package io.github.dungeon.generator.grid;
 
 import io.github.dungeon.common.Constants;
 import io.github.dungeon.common.Coord;
-import io.github.dungeon.dungeon_game.game_objects.EnemyType;
-import io.github.dungeon.dungeon_game.game_objects.RewardType;
+import io.github.dungeon.dungeon_game.danger.DangerType;
+import io.github.dungeon.dungeon_game.reward.RewardType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class GridDefinition {
     private final Coord exit = new Coord(Constants.COLUMNS - 1, Constants.ROWS - 1);
 
     @Builder.Default
-    private final Map<Coord, EnemyType> enemies = new HashMap<>();
+    private final Map<Coord, DangerType> dangers = new HashMap<>();
 
     @Builder.Default
     private final Map<Coord, RewardType> rewards = new HashMap<>();
