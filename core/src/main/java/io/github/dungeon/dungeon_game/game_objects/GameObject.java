@@ -10,8 +10,6 @@ import lombok.Setter;
 
 @Getter
 public abstract class GameObject {
-    protected final float HITBOX = 0.8f;
-
     protected final boolean isMoving;
     protected final float velocity;
 
@@ -55,20 +53,24 @@ public abstract class GameObject {
         return 1f;
     }
 
+    public float getHitbox() {
+        return 0.8f;
+    }
+
     // hitboxes
     public float left() {
-        return position.getX() + (1 - HITBOX) / 2f;
+        return position.getX() + (1 - getHitbox()) / 2f;
     }
 
     public float right() {
-        return left() + HITBOX;
+        return left() + getHitbox();
     }
 
     public float top() {
-        return position.getY() + (1 - HITBOX) / 2f;
+        return position.getY() + (1 - getHitbox()) / 2f;
     }
 
     public float bottom() {
-        return top() + HITBOX;
+        return top() + getHitbox();
     }
 }

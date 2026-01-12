@@ -45,6 +45,11 @@ public abstract class Thing extends GameObject implements Disposable {
         return animations[Math.min(frame, animations.length - 1)];
     }
 
+    @Override
+    public float getHitbox() {
+        return 0.5f;
+    }
+
     public void dispose() {
         spriteSheet.dispose();
     }

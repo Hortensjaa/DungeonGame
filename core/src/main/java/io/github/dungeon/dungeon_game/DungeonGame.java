@@ -66,7 +66,7 @@ public class DungeonGame {
 
             if (obj instanceof Enemy enemy) {
                 Coord next = enemy.move(enemy.getAction());
-                if (isOutOfBounds(enemy) || collidesWithWall(enemy)) {
+                if (isOutOfBounds(enemy) || collidesWithWall(enemy) || collidesWith(enemy, Constants.CORRIDOR)) {
                     enemy.undoMove();
                     enemy.setAction(enemy.getAction().opposite());
                 }
@@ -98,6 +98,10 @@ public class DungeonGame {
     }
 
     private boolean collidesWithWall(GameObject o) {
+        return collidesWith(o, Constants.WALL);
+    }
+
+    private boolean collidesWith(GameObject o, int structure) {
         int minX = (int) Math.floor(o.left());
         int maxX = (int) Math.floor(o.right());
         int minY = (int) Math.floor(o.top());
@@ -110,7 +114,7 @@ public class DungeonGame {
                     || y >= Constants.ROWS)
                     return true;
 
-                if (grid[y][x] == Constants.WALL)
+                if (grid[y][x] == structure)
                     return true;
             }
         }
