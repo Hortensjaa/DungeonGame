@@ -13,7 +13,7 @@ public class Enemy extends Character implements Interactable {
 
     public Enemy(DangerType type, Coord position) {
         super(type.getPath(), position, 0.05f);
-        if (type.isMoving()) {
+        if (type.getMovingDir() != null) {
             this.action = Math.random() < 0.5 ? Action.LEFT : Action.UP;
         } else {
             this.action = Action.STAY;

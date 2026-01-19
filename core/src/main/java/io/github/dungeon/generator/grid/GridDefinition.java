@@ -10,7 +10,9 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -31,6 +33,9 @@ public class GridDefinition {
 
     @Builder.Default
     private final Map<Coord, RewardType> rewards = new HashMap<>();
+
+    @Builder.Default
+    private final Set<Coord> entrances = new HashSet<>();
 
     // methods
     public int rows() {

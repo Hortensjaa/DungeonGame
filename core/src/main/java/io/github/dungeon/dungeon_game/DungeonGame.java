@@ -14,6 +14,7 @@ import lombok.Getter;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -24,6 +25,7 @@ public class DungeonGame {
     private final Player player;
     private final Coord exit;
     private final List<Interactable> interactables;
+    private final Set<Coord> entrances;
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
@@ -32,7 +34,7 @@ public class DungeonGame {
         this.interactables = def.getDangers().entrySet()
                 .stream()
                 .map(entry -> {
-                    if (entry.getValue().isMoving()) {
+                    if (entry.getValue().getMovingDir() != null) {
                         return new Enemy(entry.getValue(), entry.getKey());
                     } else {
                         return new Trap(entry.getValue(), entry.getKey());
@@ -42,6 +44,7 @@ public class DungeonGame {
         interactables.addAll(def.getRewards().entrySet().stream().map(
             entry -> new Reward(entry.getValue(), entry.getKey())
         ).toList());
+        this.entrances = def.getEntrances();
     }
 
     public boolean move(Action action) {

@@ -1,5 +1,6 @@
 package io.github.dungeon.dungeon_game.danger;
 
+import io.github.dungeon.common.Direction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,9 +11,10 @@ public enum DangerType {
     FIRE(
         "FIRE",
         "enemies/fire/sheet.png",
-        160/8, 24, 8, 1, false),
+        160/8, 24, 8, null),
 
-    LIZARD("LIZARD", "enemies/lizard/sheet.png", 8);
+    LIZARD_HORIZONTAL("LIZARD", "enemies/lizard/sheet.png", 8, Direction.RIGHT),
+    LIZARD_VERTICAL("LIZARD", "enemies/lizard/sheet.png", 8, Direction.DOWN);
 
     // ---------------------- class properties ----------------------
     private final String name;
@@ -22,22 +24,20 @@ public enum DangerType {
     private final int frameHeight;
     private final int frameCount;
 
-    private final int severity;
-    private final boolean moving;
+    private final Direction movingDir;
 
     private static final float LIZARD_PROBABILITY = 0.2f;
 
     public static DangerType getRandom() {
-        return Math.random() < LIZARD_PROBABILITY ? LIZARD : FIRE;
+        return Math.random() < LIZARD_PROBABILITY ? LIZARD_HORIZONTAL : FIRE;
     }
 
-    DangerType(String name, String path, int frameCount) {
+    DangerType(String name, String path, int frameCount,  Direction movingDir) {
         this.name = name;
         this.path = path;
         this.frameWidth = 64;
         this.frameHeight = 64;
         this.frameCount = frameCount;
-        this.severity = 2;
-        this.moving = true;
+        this.movingDir = movingDir;
     }
 }
