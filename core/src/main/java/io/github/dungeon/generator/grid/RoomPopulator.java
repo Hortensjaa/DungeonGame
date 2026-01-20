@@ -7,234 +7,324 @@ import java.util.*;
 
 public class RoomPopulator {
 
-    private static final int MAX_INFLUENCE_ITERATIONS = 50; // Budget control
-    private static final float INFLUENCE_DECAY = 0.6f; // How much difficulty spreads
-
     public static RoomContents populate(Room room) {
         if (room.getEntrances().isEmpty() || room.getTiles().isEmpty()) {
             return new RoomContents();
         }
 
         Random rng = new Random();
+        RoomContents contents = new RoomContents();
 
-        // 1. Calculate distance field from entrances
-        Map<Coord, Integer> distanceField = calculateDistanceField(room);
+        // 1. Calculate distance from entrances (one-time BFS)
+        Map<Coord, Integer> distanceFromEntrances = calculateDistanceField(room);
 
-        // 2. Find safe path network
-        Set<Coord> safePathTiles = findSafePathNetwork(room, distanceField);
+        // 2. Find safe corridor between entrances
+        Set<Coord> safePath = findMainPath(room, distanceFromEntrances);
 
-        // 3. Get available tiles
-        List<Coord> availableTiles = new ArrayList<>(room.getTiles());
-        availableTiles.removeAll(safePathTiles);
-        availableTiles.removeAll(room.getEntrances());
+        // 3. Get placeable tiles
+        Set<Coord> placeable = new HashSet<>(room.getTiles());
+        placeable.removeAll(safePath);
+        placeable.removeAll(room.getEntrances());
 
-        // 4. Categorize tiles by distance
-        Map<String, List<Coord>> zones = categorizeTiles(availableTiles, distanceField, safePathTiles);
+        if (placeable.isEmpty()) {
+            return contents;
+        }
 
-        // 5. Place entities
-        RoomContents contents = placeEntities(zones, room, rng);
+        // 4. Categorize tiles by strategic value
+        TileCategories categories = categorizeTiles(placeable, distanceFromEntrances, safePath, room);
 
-        // 6. Build influence map for difficulty
-        Map<Coord, Float> influenceMap = buildInfluenceMap(room, contents);
+        // 5. Place enemies based on difficulty
+        placeEnemies(contents, categories, room.getDifficulty(), rng);
 
-        // 7. Adjust placement based on influence (optional - balancing pass)
-        balanceRewards(contents, influenceMap, room, rng);
+        // 6. Place rewards strategically
+        placeRewards(contents, categories, placeable, room.getReward(), rng);
 
         return contents;
     }
 
-    private static Map<Coord, Float> buildInfluenceMap(Room room, RoomContents contents) {
-        Map<Coord, Float> influence = new HashMap<>();
-
-        // Initialize all tiles to base difficulty
-        for (Coord tile : room.getTiles()) {
-            influence.put(tile, room.getDifficulty() * 0.1f);
-        }
-
-        // Add enemy influence
-        for (Map.Entry<Coord, DangerType> enemy : contents.getEnemies().entrySet()) {
-            Coord pos = enemy.getKey();
-            DangerType type = enemy.getValue();
-
-            if (type.getMovingDir() != null) {
-                // Moving enemy - influence along movement axis
-                addMovingEnemyInfluence(influence, pos, type, room);
-            } else {
-                // Static trap - radial influence
-                addStaticTrapInfluence(influence, pos, room);
-            }
-        }
-
-        // Propagate influence with budget
-        propagateInfluence(influence, room);
-
-        return influence;
+    private static class TileCategories {
+        List<Coord> deepCorners = new ArrayList<>();      // Far from all entrances
+        List<Coord> ambushSpots = new ArrayList<>();      // 2-3 tiles from safe path
+        List<Coord> horizontalPaths = new ArrayList<>();  // Good for horizontal enemies
+        List<Coord> verticalPaths = new ArrayList<>();    // Good for vertical enemies
+        List<Coord> chokepoints = new ArrayList<>();      // Narrow passages
+        List<Coord> openAreas = new ArrayList<>();        // Open spaces
     }
 
-    private static void addMovingEnemyInfluence(
-        Map<Coord, Float> influence,
-        Coord pos,
-        DangerType type,
+    private static TileCategories categorizeTiles(
+        Set<Coord> placeable,
+        Map<Coord, Integer> distanceFromEntrances,
+        Set<Coord> safePath,
         Room room
     ) {
-        Direction dir = type.getMovingDir();
-        float baseDanger = 1.0f;
+        TileCategories cat = new TileCategories();
 
-        // Lizards patrol horizontally or vertically until hitting a wall
-        // Their influence spreads along their patrol path
+        int maxDist = placeable.stream()
+            .mapToInt(distanceFromEntrances::get)
+            .max()
+            .orElse(1);
 
-        Set<Coord> patrolPath = findPatrolPath(pos, dir, room);
+        for (Coord tile : placeable) {
+            int distToEntrance = distanceFromEntrances.get(tile);
+            int distToSafePath = minDistance(tile, safePath);
+            int neighborCount = countNeighbors(tile, room);
 
-        for (Coord tile : patrolPath) {
-            influence.put(tile, Math.max(influence.get(tile), baseDanger));
+            // Categorize based on spatial properties
+            float normalizedDist = (float) distToEntrance / maxDist;
 
-            // Add perpendicular influence (1 tile to sides)
-            for (Coord adjacent : getPerpendicularNeighbors(tile, dir, room)) {
-                influence.put(adjacent, Math.max(influence.get(adjacent), baseDanger * 0.7f));
-            }
-        }
-    }
-
-    private static Set<Coord> findPatrolPath(Coord start, Direction dir, Room room) {
-        Set<Coord> path = new HashSet<>();
-        path.add(start);
-
-        int dx = 0, dy = 0;
-        if (dir == Direction.RIGHT || dir == Direction.LEFT) {
-            dx = 1;
-        } else {
-            dy = 1;
-        }
-
-        // Expand in both directions along axis until wall
-        expandAlongAxis(start, dx, dy, path, room);
-        expandAlongAxis(start, -dx, -dy, path, room);
-
-        return path;
-    }
-
-    private static void expandAlongAxis(Coord start, int dx, int dy, Set<Coord> path, Room room) {
-        Coord current = new Coord((int)start.getX() + dx, (int)start.getY() + dy);
-
-        while (room.getTiles().contains(current)) {
-            path.add(current);
-            current = new Coord((int)current.getX() + dx, (int)current.getY() + dy);
-        }
-    }
-
-    private static List<Coord> getPerpendicularNeighbors(Coord tile, Direction dir, Room room) {
-        List<Coord> neighbors = new ArrayList<>();
-
-        if (dir == Direction.RIGHT || dir == Direction.LEFT) {
-            // Moving horizontally, add vertical neighbors
-            Coord up = new Coord((int)tile.getX(), (int)tile.getY() - 1);
-            Coord down = new Coord((int)tile.getX(), (int)tile.getY() + 1);
-            if (room.getTiles().contains(up)) neighbors.add(up);
-            if (room.getTiles().contains(down)) neighbors.add(down);
-        } else {
-            // Moving vertically, add horizontal neighbors
-            Coord left = new Coord((int)tile.getX() - 1, (int)tile.getY());
-            Coord right = new Coord((int)tile.getX() + 1, (int)tile.getY());
-            if (room.getTiles().contains(left)) neighbors.add(left);
-            if (room.getTiles().contains(right)) neighbors.add(right);
-        }
-
-        return neighbors;
-    }
-
-    private static void addStaticTrapInfluence(
-        Map<Coord, Float> influence,
-        Coord pos,
-        Room room
-    ) {
-        float baseDanger = 0.8f;
-        influence.put(pos, Math.max(influence.get(pos), baseDanger));
-
-        // Radial falloff around trap
-        Queue<Coord> queue = new LinkedList<>();
-        Map<Coord, Integer> distances = new HashMap<>();
-        queue.add(pos);
-        distances.put(pos, 0);
-
-        int maxRadius = 3;
-
-        while (!queue.isEmpty()) {
-            Coord current = queue.poll();
-            int dist = distances.get(current);
-
-            if (dist >= maxRadius) continue;
-
-            for (Coord neighbor : getNeighbors(current, room)) {
-                if (!distances.containsKey(neighbor)) {
-                    distances.put(neighbor, dist + 1);
-                    queue.add(neighbor);
-
-                    float falloff = baseDanger * (float)Math.pow(INFLUENCE_DECAY, dist + 1);
-                    influence.put(neighbor, Math.max(influence.get(neighbor), falloff));
-                }
-            }
-        }
-    }
-
-    private static void propagateInfluence(Map<Coord, Float> influence, Room room) {
-        // Budget-controlled diffusion
-        for (int iter = 0; iter < MAX_INFLUENCE_ITERATIONS; iter++) {
-            Map<Coord, Float> newInfluence = new HashMap<>(influence);
-            boolean changed = false;
-
-            for (Coord tile : room.getTiles()) {
-                float currentInfluence = influence.get(tile);
-                float totalNeighborInfluence = 0;
-                int neighborCount = 0;
-
-                for (Coord neighbor : getNeighbors(tile, room)) {
-                    totalNeighborInfluence += influence.get(neighbor);
-                    neighborCount++;
-                }
-
-                if (neighborCount > 0) {
-                    float avgNeighbor = totalNeighborInfluence / neighborCount;
-                    float blended = currentInfluence * 0.7f + avgNeighbor * 0.3f * INFLUENCE_DECAY;
-
-                    if (Math.abs(blended - currentInfluence) > 0.01f) {
-                        newInfluence.put(tile, blended);
-                        changed = true;
-                    }
-                }
+            // Deep corners: far from entrances, few neighbors
+            if (normalizedDist > 0.7f && neighborCount <= 2) {
+                cat.deepCorners.add(tile);
             }
 
-            influence.putAll(newInfluence);
+            // Ambush spots: close to safe path but not on it
+            if (distToSafePath >= 2 && distToSafePath <= 3) {
+                cat.ambushSpots.add(tile);
+            }
 
-            // Early exit if converged
-            if (!changed) break;
+            // Chokepoints: narrow passages (2 neighbors in line)
+            if (isChokepoint(tile, room)) {
+                cat.chokepoints.add(tile);
+            }
+
+            // Patrol paths for lizards
+            int horizontalClearance = getHorizontalClearance(tile, room);
+            int verticalClearance = getVerticalClearance(tile, room);
+
+            if (horizontalClearance >= 4) {
+                cat.horizontalPaths.add(tile);
+            }
+            if (verticalClearance >= 4) {
+                cat.verticalPaths.add(tile);
+            }
+
+            // Open areas: 3-4 neighbors
+            if (neighborCount >= 3) {
+                cat.openAreas.add(tile);
+            }
         }
+
+        return cat;
     }
 
-    private static void balanceRewards(
+    private static void placeEnemies(
         RoomContents contents,
-        Map<Coord, Float> influenceMap,
-        Room room,
+        TileCategories categories,
+        float difficulty,
         Random rng
     ) {
-        // Place bonus coins in high-danger areas (risk/reward)
-        List<Map.Entry<Coord, Float>> sortedByDanger = new ArrayList<>(influenceMap.entrySet());
-        sortedByDanger.sort((a, b) -> Float.compare(b.getValue(), a.getValue()));
+        // Calculate enemy budget
+        int totalPlaceableTiles = categories.deepCorners.size() +
+            categories.ambushSpots.size() +
+            categories.chokepoints.size() +
+            categories.openAreas.size();
 
-        int bonusCoins = (int)(room.getReward() * 5); // Extra high-value coins
+        int trapBudget = (int)(difficulty * totalPlaceableTiles * 0.25f);
+        int lizardBudget = (int)(difficulty * totalPlaceableTiles * 0.15f);
 
-        for (int i = 0; i < bonusCoins && i < sortedByDanger.size(); i++) {
-            Coord pos = sortedByDanger.get(i).getKey();
+        // STRATEGY 1: Traps in corners and ambush spots (static danger)
+        int trapsInCorners = Math.min(trapBudget / 2, categories.deepCorners.size());
+        placeFromList(contents::addTrap, categories.deepCorners, trapsInCorners, rng);
 
-            // Only place if not already occupied and influence is high
-            if (!contents.getEnemies().containsKey(pos) &&
-                !contents.getRewards().containsKey(pos) &&
-                influenceMap.get(pos) > 0.5f) {
-                contents.addCoin(pos);
-            }
+        int trapsInAmbush = Math.min(trapBudget - trapsInCorners, categories.ambushSpots.size());
+        placeFromList(contents::addTrap, categories.ambushSpots, trapsInAmbush, rng);
+
+        // STRATEGY 2: Lizards in patrol paths (moving danger)
+        List<Coord> horizontalPaths = new ArrayList<>(categories.horizontalPaths);
+        List<Coord> verticalPaths = new ArrayList<>(categories.verticalPaths);
+
+        // Remove positions that already have enemies
+        horizontalPaths.removeIf(c -> contents.getEnemies().containsKey(c));
+        verticalPaths.removeIf(c -> contents.getEnemies().containsKey(c));
+
+        int horizontalLizards = lizardBudget / 2;
+        int verticalLizards = lizardBudget - horizontalLizards;
+
+        // Spread lizards out (don't cluster on same axis)
+        placeSpreadOut(contents::addLizardX, horizontalPaths, horizontalLizards, true, rng);
+        placeSpreadOut(contents::addLizardY, verticalPaths, verticalLizards, false, rng);
+
+        // STRATEGY 3: Fill remaining budget in chokepoints
+        int remainingTraps = trapBudget - trapsInCorners - trapsInAmbush;
+        if (remainingTraps > 0) {
+            List<Coord> chokepoints = new ArrayList<>(categories.chokepoints);
+            chokepoints.removeIf(c -> contents.getEnemies().containsKey(c));
+            placeFromList(contents::addTrap, chokepoints, remainingTraps, rng);
         }
     }
 
-    // Original helper methods
+    private static void placeRewards(
+        RoomContents contents,
+        TileCategories categories,
+        Set<Coord> placeable,
+        float reward,
+        Random rng
+    ) {
+        int coinBudget = Math.max(2, (int)(reward * placeable.size() * 0.3f));
+
+        // STRATEGY: 3-tier reward placement
+        // - Tier 1 (40%): Near enemies (risk/reward)
+        // - Tier 2 (30%): In corners/edges (exploration)
+        // - Tier 3 (30%): Random scatter (breadcrumbs)
+
+        int tier1Coins = (int)(coinBudget * 0.4f);
+        int tier2Coins = (int)(coinBudget * 0.3f);
+        int tier3Coins = coinBudget - tier1Coins - tier2Coins;
+
+        // Tier 1: Next to enemies (1-2 tiles away)
+        List<Coord> nearDanger = new ArrayList<>();
+        for (Coord enemyPos : contents.getEnemies().keySet()) {
+            for (Coord neighbor : getNeighborsInRadius(enemyPos, 2, placeable)) {
+                if (!contents.getEnemies().containsKey(neighbor)) {
+                    nearDanger.add(neighbor);
+                }
+            }
+        }
+        placeFromList(contents::addCoin, nearDanger, tier1Coins, rng);
+
+        // Tier 2: Deep corners (exploration reward)
+        List<Coord> corners = new ArrayList<>(categories.deepCorners);
+        corners.removeIf(c -> contents.getEnemies().containsKey(c) ||
+            contents.getRewards().containsKey(c));
+        placeFromList(contents::addCoin, corners, tier2Coins, rng);
+
+        // Tier 3: Random scatter
+        List<Coord> available = new ArrayList<>(placeable);
+        available.removeIf(c -> contents.getEnemies().containsKey(c) ||
+            contents.getRewards().containsKey(c));
+        placeFromList(contents::addCoin, available, tier3Coins, rng);
+    }
+
+    // === PLACEMENT HELPERS ===
+
+    private static void placeFromList(
+        java.util.function.Consumer<Coord> placer,
+        List<Coord> candidates,
+        int count,
+        Random rng
+    ) {
+        List<Coord> available = new ArrayList<>(candidates);
+        for (int i = 0; i < count && !available.isEmpty(); i++) {
+            Coord pos = available.remove(rng.nextInt(available.size()));
+            placer.accept(pos);
+        }
+    }
+
+    private static void placeSpreadOut(
+        java.util.function.Consumer<Coord> placer,
+        List<Coord> candidates,
+        int count,
+        boolean horizontal,
+        Random rng
+    ) {
+        if (candidates.isEmpty()) return;
+
+        List<Coord> placed = new ArrayList<>();
+        List<Coord> available = new ArrayList<>(candidates);
+
+        for (int i = 0; i < count && !available.isEmpty(); i++) {
+            // Sort by distance from already-placed lizards
+            if (!placed.isEmpty()) {
+                available.sort((a, b) -> {
+                    int minDistA = placed.stream()
+                        .mapToInt(p -> axisDistance(a, p, horizontal))
+                        .min()
+                        .orElse(Integer.MAX_VALUE);
+                    int minDistB = placed.stream()
+                        .mapToInt(p -> axisDistance(b, p, horizontal))
+                        .min()
+                        .orElse(Integer.MAX_VALUE);
+                    return Integer.compare(minDistB, minDistA); // Prefer farther
+                });
+            }
+
+            Coord pos = available.remove(0); // Take the furthest
+            placer.accept(pos);
+            placed.add(pos);
+        }
+    }
+
+    private static int axisDistance(Coord a, Coord b, boolean horizontal) {
+        if (horizontal) {
+            return Math.abs((int)a.getY() - (int)b.getY()); // Different rows
+        } else {
+            return Math.abs((int)a.getX() - (int)b.getX()); // Different columns
+        }
+    }
+
+    // === SPATIAL ANALYSIS ===
+
+    private static int getHorizontalClearance(Coord tile, Room room) {
+        int x = (int)tile.getX();
+        int y = (int)tile.getY();
+
+        int left = 0, right = 0;
+        while (room.getTiles().contains(new Coord(x - left - 1, y))) left++;
+        while (room.getTiles().contains(new Coord(x + right + 1, y))) right++;
+
+        return left + right + 1;
+    }
+
+    private static int getVerticalClearance(Coord tile, Room room) {
+        int x = (int)tile.getX();
+        int y = (int)tile.getY();
+
+        int up = 0, down = 0;
+        while (room.getTiles().contains(new Coord(x, y - up - 1))) up++;
+        while (room.getTiles().contains(new Coord(x, y + down + 1))) down++;
+
+        return up + down + 1;
+    }
+
+    private static boolean isChokepoint(Coord tile, Room room) {
+        List<Coord> neighbors = getNeighbors(tile, room);
+        if (neighbors.size() != 2) return false;
+
+        // Check if neighbors are opposite (forms a line)
+        Coord n1 = neighbors.get(0);
+        Coord n2 = neighbors.get(1);
+
+        boolean horizontal = (int)n1.getY() == (int)tile.getY() &&
+            (int)n2.getY() == (int)tile.getY();
+        boolean vertical = (int)n1.getX() == (int)tile.getX() &&
+            (int)n2.getX() == (int)tile.getX();
+
+        return horizontal || vertical;
+    }
+
+    private static int countNeighbors(Coord tile, Room room) {
+        return getNeighbors(tile, room).size();
+    }
+
+    private static int minDistance(Coord tile, Set<Coord> targets) {
+        return targets.stream()
+            .mapToInt(t -> Math.abs((int)(tile.getX() - t.getX())) +
+                Math.abs((int)(tile.getY() - t.getY())))
+            .min()
+            .orElse(Integer.MAX_VALUE);
+    }
+
+    private static List<Coord> getNeighborsInRadius(Coord center, int radius, Set<Coord> validTiles) {
+        List<Coord> result = new ArrayList<>();
+        int cx = (int)center.getX();
+        int cy = (int)center.getY();
+
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                if (dx == 0 && dy == 0) continue;
+                if (Math.abs(dx) + Math.abs(dy) > radius) continue;
+
+                Coord coord = new Coord(cx + dx, cy + dy);
+                if (validTiles.contains(coord)) {
+                    result.add(coord);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    // === PATHFINDING ===
 
     private static Map<Coord, Integer> calculateDistanceField(Room room) {
         Map<Coord, Integer> distances = new HashMap<>();
@@ -259,24 +349,24 @@ public class RoomPopulator {
         return distances;
     }
 
-    private static Set<Coord> findSafePathNetwork(Room room, Map<Coord, Integer> distanceField) {
-        Set<Coord> safePath = new HashSet<>();
+    private static Set<Coord> findMainPath(Room room, Map<Coord, Integer> distanceField) {
+        Set<Coord> path = new HashSet<>();
         List<Coord> entrances = new ArrayList<>(room.getEntrances());
 
+        // Find paths between all entrance pairs
         for (int i = 0; i < entrances.size(); i++) {
             for (int j = i + 1; j < entrances.size(); j++) {
-                Set<Coord> path = findShortestPath(entrances.get(i), entrances.get(j), room);
-                safePath.addAll(path);
-
-                Set<Coord> buffer = new HashSet<>();
-                for (Coord tile : path) {
-                    buffer.addAll(getNeighbors(tile, room));
-                }
-                safePath.addAll(buffer);
+                path.addAll(findShortestPath(entrances.get(i), entrances.get(j), room));
             }
         }
 
-        return safePath;
+        // Add 1-tile buffer
+        Set<Coord> buffered = new HashSet<>(path);
+        for (Coord tile : path) {
+            buffered.addAll(getNeighbors(tile, room));
+        }
+
+        return buffered;
     }
 
     private static Set<Coord> findShortestPath(Coord start, Coord end, Room room) {
@@ -305,147 +395,6 @@ public class RoomPopulator {
         }
 
         return path;
-    }
-
-    private static Map<String, List<Coord>> categorizeTiles(
-        List<Coord> availableTiles,
-        Map<Coord, Integer> distanceField,
-        Set<Coord> safePathTiles
-    ) {
-        Map<String, List<Coord>> zones = new HashMap<>();
-        zones.put("deep", new ArrayList<>());
-        zones.put("medium", new ArrayList<>());
-        zones.put("edge", new ArrayList<>());
-        zones.put("horizontal", new ArrayList<>()); // For horizontal lizards
-        zones.put("vertical", new ArrayList<>());   // For vertical lizards
-
-        if (availableTiles.isEmpty()) return zones;
-
-        int maxDist = availableTiles.stream()
-            .mapToInt(distanceField::get)
-            .max()
-            .orElse(1);
-
-        for (Coord tile : availableTiles) {
-            int dist = distanceField.get(tile);
-            float normalizedDist = (float) dist / maxDist;
-
-            int distToSafePath = Integer.MAX_VALUE;
-            for (Coord safeTile : safePathTiles) {
-                int d = Math.abs((int)(tile.getX() - safeTile.getX())) +
-                    Math.abs((int)(tile.getY() - safeTile.getY()));
-                distToSafePath = Math.min(distToSafePath, d);
-            }
-
-            // Check if tile is in a corridor-like space (good for lizards)
-            if (isHorizontalCorridor(tile, availableTiles)) {
-                zones.get("horizontal").add(tile);
-            } else if (isVerticalCorridor(tile, availableTiles)) {
-                zones.get("vertical").add(tile);
-            }
-
-            if (normalizedDist > 0.6f) {
-                zones.get("deep").add(tile);
-            } else if (distToSafePath <= 2) {
-                zones.get("edge").add(tile);
-            } else {
-                zones.get("medium").add(tile);
-            }
-        }
-
-        return zones;
-    }
-
-    private static boolean isHorizontalCorridor(Coord tile, List<Coord> availableTiles) {
-        // Check if there's a clear horizontal path (3+ tiles in a row)
-        int x = (int)tile.getX();
-        int y = (int)tile.getY();
-
-        int leftCount = 0, rightCount = 0;
-        for (int dx = 1; dx <= 3; dx++) {
-            if (availableTiles.contains(new Coord(x - dx, y))) leftCount++;
-            if (availableTiles.contains(new Coord(x + dx, y))) rightCount++;
-        }
-
-        return (leftCount + rightCount) >= 3;
-    }
-
-    private static boolean isVerticalCorridor(Coord tile, List<Coord> availableTiles) {
-        // Check if there's a clear vertical path (3+ tiles in a column)
-        int x = (int)tile.getX();
-        int y = (int)tile.getY();
-
-        int upCount = 0, downCount = 0;
-        for (int dy = 1; dy <= 3; dy++) {
-            if (availableTiles.contains(new Coord(x, y - dy))) upCount++;
-            if (availableTiles.contains(new Coord(x, y + dy))) downCount++;
-        }
-
-        return (upCount + downCount) >= 3;
-    }
-
-    private static RoomContents placeEntities(
-        Map<String, List<Coord>> zones,
-        Room room,
-        Random rng
-    ) {
-        RoomContents contents = new RoomContents();
-
-        float difficulty = room.getDifficulty();
-        float reward = room.getReward();
-        int totalTiles = room.getTiles().size();
-
-        int numTraps = Math.max(1, (int)(difficulty * totalTiles * 0.2f));
-        int numLizards = Math.max(1, (int)(difficulty * totalTiles * 0.15f));
-        int numCoins = Math.max(2, (int)(reward * totalTiles * 0.25f));
-
-        // Place traps in deep zones
-        List<Coord> deepZone = zones.get("deep");
-        for (int i = 0; i < numTraps && !deepZone.isEmpty(); i++) {
-            Coord pos = deepZone.remove(rng.nextInt(deepZone.size()));
-            contents.addTrap(pos);
-        }
-
-        // Place lizards - prefer corridor-like spaces
-        List<Coord> horizontalZone = zones.get("horizontal");
-        List<Coord> verticalZone = zones.get("vertical");
-        List<Coord> mediumZone = zones.get("medium");
-
-        int horizontalLizards = numLizards / 2;
-        int verticalLizards = numLizards - horizontalLizards;
-
-        for (int i = 0; i < horizontalLizards; i++) {
-            if (!horizontalZone.isEmpty()) {
-                Coord pos = horizontalZone.remove(rng.nextInt(horizontalZone.size()));
-                contents.addLizardX(pos);
-            } else if (!mediumZone.isEmpty()) {
-                Coord pos = mediumZone.remove(rng.nextInt(mediumZone.size()));
-                contents.addLizardX(pos);
-            }
-        }
-
-        for (int i = 0; i < verticalLizards; i++) {
-            if (!verticalZone.isEmpty()) {
-                Coord pos = verticalZone.remove(rng.nextInt(verticalZone.size()));
-                contents.addLizardY(pos);
-            } else if (!mediumZone.isEmpty()) {
-                Coord pos = mediumZone.remove(rng.nextInt(mediumZone.size()));
-                contents.addLizardY(pos);
-            }
-        }
-
-        // Coins - spread across zones
-        List<Coord> allAvailable = new ArrayList<>();
-        allAvailable.addAll(zones.get("deep"));
-        allAvailable.addAll(zones.get("medium"));
-        allAvailable.addAll(zones.get("edge"));
-
-        for (int i = 0; i < numCoins && !allAvailable.isEmpty(); i++) {
-            Coord pos = allAvailable.remove(rng.nextInt(allAvailable.size()));
-            contents.addCoin(pos);
-        }
-
-        return contents;
     }
 
     private static List<Coord> getNeighbors(Coord coord, Room room) {

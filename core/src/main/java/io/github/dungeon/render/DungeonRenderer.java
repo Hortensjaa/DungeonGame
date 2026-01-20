@@ -31,7 +31,6 @@ public class DungeonRenderer implements Disposable {
         Constants.CORRIDOR, new Texture(Constants.CORRIDOR_SPRITE)
     );
     private final Texture goalTexture = new Texture(Constants.GOAL_SPRITE);
-    private final Texture entranceTexture = new Texture("walls_32/tile_7.png");
 
     public DungeonRenderer(DungeonGame game) {
         this.game = game;
@@ -60,7 +59,6 @@ public class DungeonRenderer implements Disposable {
         batch.begin();
 
         drawGrid();
-        drawEntrances();
         drawPlayer();
         drawInteractables();
 
@@ -123,20 +121,6 @@ public class DungeonRenderer implements Disposable {
             float drawY = cellY + (Constants.CELL_SIZE - drawHeight) / 2f;
 
             batch.draw(t, drawX, drawY, drawWidth, drawHeight);
-        }
-    }
-
-    private void drawEntrances() {
-        for (Coord c : game.getEntrances()) {
-            float x = c.getX() * Constants.CELL_SIZE;
-            float y = c.getY() * Constants.CELL_SIZE;
-            batch.draw(
-                new TextureRegion(entranceTexture),
-                x,
-                y,
-                Constants.CELL_SIZE,
-                Constants.CELL_SIZE
-            );
         }
     }
 

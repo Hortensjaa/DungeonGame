@@ -193,7 +193,6 @@ public class GridGenerator extends Generator {
             RoomContents contents = room.getRoomContents(generator.grid);
             generator.enemies.putAll(contents.getEnemies());
             generator.rewards.putAll(contents.getRewards());
-            generator.entrances.addAll(room.getEntrances());
         }
 
         return GridDefinition.builder()
@@ -202,7 +201,6 @@ public class GridGenerator extends Generator {
                 .exit(generator.exitPoint)
                 .dangers(generator.enemies)
                 .rewards(generator.rewards)
-                .entrances(generator.entrances)
                 .build();
     }
 

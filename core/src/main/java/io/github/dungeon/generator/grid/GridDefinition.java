@@ -34,9 +34,6 @@ public class GridDefinition {
     @Builder.Default
     private final Map<Coord, RewardType> rewards = new HashMap<>();
 
-    @Builder.Default
-    private final Set<Coord> entrances = new HashSet<>();
-
     // methods
     public int rows() {
         return grid.length;
