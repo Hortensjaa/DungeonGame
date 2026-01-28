@@ -37,9 +37,9 @@ public class Constants {
     public static final float MAX_REWARD_COVERAGE = 0.25f;
 
     //    sprites
-    public static final String WALL_SPRITE = "walls_32/tile_14.png";
-    public static final String ROOM_SPRITE = "walls_32/tile_11.png";
-    public static final String CORRIDOR_SPRITE = "walls_32/tile_2.png";
-    public static final String GOAL_SPRITE = "walls_32/tile_6.png";
+    public static final String WALL_SPRITE = "walls_32/tile_6.png";
+    public static final String ROOM_SPRITE = "walls_32/tile_3.png";
+    public static final String CORRIDOR_SPRITE = "walls_32/tile_14.png";
+    public static final String GOAL_SPRITE = "walls_32/tile_10.png";
 
 }

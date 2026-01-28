@@ -7,15 +7,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import io.github.dungeon.common.Constants;
 import io.github.dungeon.common.Coord;
 import io.github.dungeon.dungeon_game.DungeonGame;
-import io.github.dungeon.dungeon_game.danger.Enemy;
+import io.github.dungeon.dungeon_game.Goal;
 import io.github.dungeon.dungeon_game.game_objects.Interactable;
-import io.github.dungeon.dungeon_game.reward.Reward;
 import lombok.Getter;
 
+import java.util.Comparator;
 import java.util.Map;
 
 public class DungeonRenderer implements Disposable {
@@ -30,7 +29,6 @@ public class DungeonRenderer implements Disposable {
         Constants.ROOM, new Texture(Constants.ROOM_SPRITE),
         Constants.CORRIDOR, new Texture(Constants.CORRIDOR_SPRITE)
     );
-    private final Texture goalTexture = new Texture(Constants.GOAL_SPRITE);
 
     public DungeonRenderer(DungeonGame game) {
         this.game = game;
@@ -42,7 +40,6 @@ public class DungeonRenderer implements Disposable {
             Gdx.graphics.getHeight());
         viewport = new ExtendViewport(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, camera);
         viewport.apply();
-
     }
 
     public void render() {
@@ -59,14 +56,29 @@ public class DungeonRenderer implements Disposable {
         batch.begin();
 
         drawGrid();
+        drawGoal();
         drawPlayer();
         drawInteractables();
 
         batch.end();
     }
 
-    private void drawGrid() {
+    private void drawGoal() {
+        Goal goal = game.getExit();
+        Coord c = goal.getPosition();
+        TextureRegion frame = goal.getCurrentFrame();
 
+        float cellX = c.getX() * Constants.CELL_SIZE - 0.5f * Constants.CELL_SIZE ;
+        float cellY = c.getY() * Constants.CELL_SIZE - 0.5f * Constants.CELL_SIZE ;
+
+        // Center the 64x64 portal in the cell
+        float drawX = cellX + (Constants.CELL_SIZE - Constants.CELL_SIZE) / 2f;
+        float drawY = cellY + (Constants.CELL_SIZE - Constants.CELL_SIZE) / 2f;
+
+        batch.draw(frame, drawX, drawY, Constants.CELL_SIZE * 2, Constants.CELL_SIZE * 2);
+    }
+
+    private void drawGrid() {
         int[][] grid = game.getGrid();
 
         for (int y = 0; y < grid.length; y++) {
@@ -75,8 +87,6 @@ public class DungeonRenderer implements Disposable {
                 batch.draw(t, x * Constants.CELL_SIZE, y * Constants.CELL_SIZE);
             }
         }
-
-        batch.draw(goalTexture, game.getExit().getX() * Constants.CELL_SIZE, game.getExit().getY() * Constants.CELL_SIZE);
     }
 
     private void drawPlayer() {
@@ -91,6 +101,7 @@ public class DungeonRenderer implements Disposable {
     }
 
     private void drawInteractables() {
+        game.getInteractables().sort(Comparator.comparingInt(Interactable::getDrawLayer));
         for (Interactable e : game.getInteractables()) {
             Coord c = e.getPosition();
             TextureRegion t = e.getCurrentFrame();
@@ -127,7 +138,6 @@ public class DungeonRenderer implements Disposable {
     public void dispose() {
         batch.dispose();
         game.getPlayer().dispose();
-        goalTexture.dispose();
         for (Interactable e : game.getInteractables()) {
             e.dispose();
         }

@@ -31,4 +31,9 @@ public class Enemy extends Character implements Interactable {
     public void onInteraction(Player player) {
         player.decreaseScore(); // todo: in standalone game it will be health decrease
     }
+
+    @Override
+    public int getDrawLayer() {
+        return 3;
+    }
 }

@@ -23,13 +23,13 @@ public class DungeonGame {
 
     private final int[][] grid;
     private final Player player;
-    private final Coord exit;
+    private final Goal exit;
     private final List<Interactable> interactables;
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
         this.player = new Player(def.getPlayerStart());
-        this.exit = def.getExit();
+        this.exit = new Goal(def.getExit());
         this.interactables = def.getDangers().entrySet()
                 .stream()
                 .map(entry -> {
@@ -56,6 +56,7 @@ public class DungeonGame {
     }
 
     public void update(float delta) {
+        exit.update(delta);
         player.update(delta);
         Coord playerPos = player.getPosition();
 

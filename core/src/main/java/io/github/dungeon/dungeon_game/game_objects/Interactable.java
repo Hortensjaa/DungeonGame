@@ -11,4 +11,5 @@ public interface Interactable {
     TextureRegion getCurrentFrame();
     void dispose();
     float getScale();
+    int getDrawLayer();
 }

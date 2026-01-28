@@ -27,4 +27,9 @@ public class Reward extends Thing implements Interactable {
     public float getScale() {
         return 0.5f;
     }
+
+    @Override
+    public int getDrawLayer() {
+        return 1;
+    }
 }
