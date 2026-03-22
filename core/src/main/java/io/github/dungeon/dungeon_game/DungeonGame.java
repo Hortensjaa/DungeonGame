@@ -14,7 +14,6 @@ import lombok.Getter;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -59,6 +58,11 @@ public class DungeonGame {
         exit.update(delta);
         player.update(delta);
         Coord playerPos = player.getPosition();
+
+        if (exit.getPosition().equals(playerPos)) {
+            exit.onInteraction(player);
+            return;
+        }
 
         Iterator<Interactable> it = interactables.iterator();
 

@@ -18,7 +18,7 @@ public class DungeonScreen implements Screen, InputProcessor {
     private Action currentAction = Action.STAY;
 
     public DungeonScreen(Game gdxGame) {
-        GridDefinition def = GenerationUtils.generateFromFile("Large_rooms_8x6", 4, 5);
+        GridDefinition def = GenerationUtils.generateFromFile("Large_rooms_8x6", 9, 1);
         this.game = new DungeonGame(def);
         this.renderer = new DungeonRenderer(game);
         this.uiRenderer = new UIRenderer(game.getPlayer());
@@ -40,7 +40,7 @@ public class DungeonScreen implements Screen, InputProcessor {
         }
         game.update(delta);      // logic
         renderer.render();      // drawing
-        uiRenderer.render();    // UI (bars, score)
+//        uiRenderer.render();    // UI (bars, score)
     }
 
     @Override
@@ -120,7 +120,7 @@ public class DungeonScreen implements Screen, InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         float zoomSpeed = 0.1f;
         renderer.getCamera().zoom += amountY * zoomSpeed;
-        renderer.getCamera().zoom = MathUtils.clamp(renderer.getCamera().zoom, 0.5f, 3f);
+        renderer.getCamera().zoom = MathUtils.clamp(renderer.getCamera().zoom, 0.5f, 5f);
         return true;
     }
 

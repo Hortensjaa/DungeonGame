@@ -6,10 +6,8 @@ import io.github.dungeon.generator.grid.LayoutGenerator;
 import io.github.dungeon.generator.tree.DungeonTree;
 import io.github.dungeon.generator.tree.NodeTypes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.ToDoubleFunction;
 
 public final class Fitness {
     // ------------------ quality ------------------
@@ -56,7 +54,7 @@ public final class Fitness {
     }
 
     // which part of the dungeon is on the main path from start to exit; should be ~50%
-    static float startToExitPath(DungeonTree tree) {
+    static float startToExitPathLen(DungeonTree tree) {
         List<DungeonTree> nodes = new ArrayList<>();
         tree.collectNodes(nodes);
 
@@ -133,26 +131,52 @@ public final class Fitness {
     }
 
     // ------------------ other ------------------
-    static float averageDifficulty(DungeonTree tree) {
-        List<DungeonTree> nodes = new ArrayList<>();
-        tree.collectNodes(nodes);
+    private static float average(List<DungeonTree> nodes, ToDoubleFunction<DungeonTree> mapper) {
+        if (nodes.isEmpty()) return 0;
 
-        float totalDifficulty = 0;
+        double total = 0;
         for (DungeonTree node : nodes) {
-            totalDifficulty += node.getType().getDifficulty();
+            total += mapper.applyAsDouble(node);
         }
-        return totalDifficulty / nodes.size();
+        return (float) (total / nodes.size());
     }
 
-    static float averageReward(DungeonTree tree) {
+    private static List<DungeonTree> getAllNodes(DungeonTree tree) {
         List<DungeonTree> nodes = new ArrayList<>();
         tree.collectNodes(nodes);
+        return nodes;
+    }
 
-        float totalReward = 0;
-        for (DungeonTree node : nodes) {
-            totalReward += node.getType().getReward();
-        }
-        return totalReward / nodes.size();
+    private static List<DungeonTree> getMainPath(DungeonTree tree) {
+        if (hasStartAndExitOnce(tree) == 0f) return Collections.emptyList();
+
+        List<DungeonTree> path = new ArrayList<>();
+        tree.collectNodesMainPath(path);
+        return path;
+    }
+
+    private static float averageRisk(DungeonTree tree) {
+        return average(getAllNodes(tree), n -> n.getType().getRisk());
+    }
+
+    private static float averageReward(DungeonTree tree) {
+        return average(getAllNodes(tree), n -> n.getType().getReward());
+    }
+
+    private static float averageRiskOnMainPath(DungeonTree tree) {
+        return average(getMainPath(tree), n -> n.getType().getRisk());
+    }
+
+    private static float averageRewardOnMainPath(DungeonTree tree) {
+        return average(getMainPath(tree), n -> n.getType().getReward());
+    }
+
+    public static float riskValue(DungeonTree tree) {
+        return averageRisk(tree) * 0.75f + averageRiskOnMainPath(tree) * 0.25f;
+    }
+
+    public static float rewardValue(DungeonTree tree) {
+        return averageReward(tree) * 0.75f + averageRewardOnMainPath(tree) * 0.25f;
     }
 
     // ------------- API -------------
@@ -169,7 +193,7 @@ public final class Fitness {
     private static float quality(DungeonTree tree) {
         return (
                 countNodes(tree)
-                + startToExitPath(tree)
+                + startToExitPathLen(tree)
                 + countGrandchildren(tree)
                 + nodesDiversity(tree)
         ) / 4;

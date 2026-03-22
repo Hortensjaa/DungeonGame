@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public class NodeTypes {
 
+    // todo: distinguish more types, like burning room, iron maidens room, potions lab etc. with its constraints.
     public static Base fromString(String type, float difficulty, float reward) {
         switch (type) {
             case "Empty":
@@ -41,7 +42,7 @@ public class NodeTypes {
     @AllArgsConstructor
     @Getter
     public static abstract class Base {
-        float difficulty, reward;  // normalised [0,1]
+        float risk, reward;  // normalised [0,1]
         String name;
         String shortName;
     }

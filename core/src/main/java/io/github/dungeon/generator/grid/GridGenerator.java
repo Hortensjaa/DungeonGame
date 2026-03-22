@@ -114,9 +114,9 @@ public class GridGenerator extends Generator {
 
                 Coord leftUpperCorner = toGridCoords(new Coord(x, y));
                 if (!irregularRooms)
-                    placeRegularRoom(leftUpperCorner, field.type.getDifficulty(), field.type.getReward());
+                    placeRegularRoom(leftUpperCorner, field.type.getRisk(), field.type.getReward());
                 else
-                    placeIrregularRoom(leftUpperCorner, field.type.getDifficulty(), field.type.getReward());
+                    placeIrregularRoom(leftUpperCorner, field.type.getRisk(), field.type.getReward());
 
                 int centerX = (int) leftUpperCorner.getX() + partitionWidth / 2;
                 int centerY = (int) leftUpperCorner.getY() + partitionHeight / 2;
@@ -129,7 +129,7 @@ public class GridGenerator extends Generator {
                 }
 
                 rooms.put(center, new Room((int) leftUpperCorner.getX(), (int) leftUpperCorner.getY(),
-                    partitionWidth, partitionHeight, grid, field.type.getDifficulty(), field.type.getReward()));
+                    partitionWidth, partitionHeight, grid, field.type.getRisk(), field.type.getReward()));
             }
         }
     }

@@ -108,8 +108,8 @@ public final class MapElites {
     public static MapElitesArchive run(int generations_num) {
         // -- initialize
         MapElitesArchive archive = new MapElitesArchive(
-                Fitness::averageDifficulty,
-                Fitness::averageReward,
+                Fitness::riskValue,
+                Fitness::rewardValue,
                 tree -> Fitness.fitness(tree, true, true),
                 0.1f, 0.7f,
                 0.2f, 0.8f

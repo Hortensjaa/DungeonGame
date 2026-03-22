@@ -62,4 +62,9 @@ public final class GenerationUtils {
 //        GridDefinition gridDefinition2 = GeneratorFromLayout.generate(dirName, x, y);
         return gridDefinition;
     }
+
+    // -------- test --------
+    public static void main(String[] args) {
+        GridDefinition gridDefinition = runSaveAndGenerate(10_000);
+    }
 }

@@ -284,6 +284,30 @@ public class DungeonTree {
         if (thirdChild != null) thirdChild.collectNodes(out);
     }
 
+    public boolean collectNodesMainPath(List<DungeonTree> out) {
+        if (this.type instanceof NodeTypes.Exit) {
+            out.add(this);
+            return true;
+        }
+
+        if (firstChild != null && firstChild.collectNodesMainPath(out)) {
+            out.add(this);
+            return true;
+        }
+
+        if (secondChild != null && secondChild.collectNodesMainPath(out)) {
+            out.add(this);
+            return true;
+        }
+
+        if (thirdChild != null && thirdChild.collectNodesMainPath(out)) {
+            out.add(this);
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean isStartOrExit() {
         return type instanceof NodeTypes.Start || type instanceof NodeTypes.Exit;
     }

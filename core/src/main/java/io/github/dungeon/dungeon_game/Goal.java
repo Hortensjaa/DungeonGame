@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 import io.github.dungeon.common.Coord;
 import io.github.dungeon.dungeon_game.game_objects.GameObject;
+import io.github.dungeon.dungeon_game.game_objects.Interactable;
 
-public class Goal extends GameObject implements Disposable {
+public class Goal extends GameObject implements Disposable, Interactable {
     protected static final float FRAME_DURATION = 0.1f;
     private final TextureRegion[] animations;
 
@@ -44,6 +45,11 @@ public class Goal extends GameObject implements Disposable {
         return frames;
     }
 
+    @Override
+    public void onInteraction(Player player) {
+        System.out.println("Goal reached!");
+    }
+
     public void update(float delta) {
         timer += delta;
         if (timer >= FRAME_DURATION) {
@@ -63,5 +69,10 @@ public class Goal extends GameObject implements Disposable {
 
     public void dispose() {
         spriteSheet.dispose();
+    }
+
+    @Override
+    public int getDrawLayer() {
+        return 4;
     }
 }

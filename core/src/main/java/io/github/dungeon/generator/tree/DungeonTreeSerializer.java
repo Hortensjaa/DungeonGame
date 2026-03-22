@@ -59,7 +59,7 @@ public class DungeonTreeSerializer {
             nodes.add(new NodeDTO(
                     id,
                     node.getType().getName(),
-                    node.getType().getDifficulty(),
+                    node.getType().getRisk(),
                     node.getType().getReward()
             ));
 

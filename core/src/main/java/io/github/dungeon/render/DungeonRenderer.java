@@ -138,6 +138,7 @@ public class DungeonRenderer implements Disposable {
     public void dispose() {
         batch.dispose();
         game.getPlayer().dispose();
+        game.getExit().dispose();
         for (Interactable e : game.getInteractables()) {
             e.dispose();
         }
