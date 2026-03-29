@@ -10,12 +10,18 @@ import java.util.*;
 import java.util.function.ToDoubleFunction;
 
 public final class Fitness {
+    // ------------------ helpers ------------------
+    private static float gaussDistribution(float percent, float mu, float sigma) {
+        float diff = percent - mu;
+        return (float) Math.exp(-(diff * diff) / (2 * sigma * sigma));
+    }
+
     // ------------------ quality ------------------
     // more -> better (up to 75% of max nodes)
     private static float countNodes(DungeonTree tree) {
         int count = tree.countNodes();
         float value = (float) count / Constants.MAX_NODES;
-        return 1.0f - Math.abs(value - 0.75f);
+        return gaussDistribution(value, 0.75f, 0.15f);
     }
 
     private static float nodesDiversity(DungeonTree tree) {
@@ -24,18 +30,20 @@ public final class Fitness {
 
         Map<String, Integer> types = new HashMap<>();
         for (DungeonTree node : nodes) {
-            types.put(node.getType().getName(), types.getOrDefault(node.getType().getName(), 0) + 1);
+            types.put(node.getType().getName(),
+                types.getOrDefault(node.getType().getName(), 0) + 1);
         }
 
-        int sumOfSquares = types.values().stream()
-                .mapToInt(count -> count * count)
-                .sum();
+        int total = nodes.size();
+        double entropy = 0.0;
 
-        int totalNodes = nodes.size();
-        float maxSum = (float) (totalNodes * totalNodes);
-        float minSum = (float) totalNodes;
+        for (int count : types.values()) {
+            double p = (double) count / total;
+            entropy -= p * Math.log(p);
+        }
 
-        return 1.0f - (sumOfSquares - minSum) / (maxSum - minSum);
+        double maxEntropy = Math.log(5);
+        return (float)(entropy / maxEntropy);
     }
 
     // which part of the dungeon is on the main path from start to exit; should be ~50%
@@ -60,7 +68,7 @@ public final class Fitness {
 
         int distance = tree.getTreeDistance(start, exit);
         float percent = distance / (float)(tree.countNodes());
-        return 1.0f - Math.abs(percent - 0.5f);
+        return gaussDistribution(percent, 0.5f, 0.1f);
     }
 
     public static float avgBranchingFactor(DungeonTree tree) {
@@ -99,7 +107,8 @@ public final class Fitness {
     private static float balanceValue(DungeonTree tree) {
         float risk = riskValue(tree);
         float reward = rewardValue(tree);
-        return 1 - Math.abs(risk - reward);
+        float diff = reward - risk;
+        return gaussDistribution(diff, 0f, 0.2f);
     }
 
     // ------------------ controls ------------------
