@@ -178,9 +178,9 @@ public class MapElitesArchive {
 
         sb.append("Generations: ").append(generationCount).append("\n");
         sb.append("Fitness: ").append("quality-control").append("\n");
-        sb.append("X function: ").append("difficulty").append("\n");
+        sb.append("X function: ").append("risk").append("\n");
         sb.append("X bounds: ").append("min: ").append(min_x).append(" max: ").append(max_x).append("\n");
-        sb.append("Y function: ").append("reward").append("\n");
+        sb.append("Y function: ").append("branching").append("\n");
         sb.append("Y bounds: ").append("min: ").append(min_y).append(" max: ").append(max_y).append("\n");
         sb.append("Buckets: ").append(size * size).append(" (").append(size).append(" per line)\n");
 
