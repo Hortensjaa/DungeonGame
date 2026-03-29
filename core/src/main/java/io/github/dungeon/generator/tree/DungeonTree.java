@@ -206,20 +206,6 @@ public class DungeonTree {
         return children;
     }
 
-    public HashSet<DungeonTree> getGrandchildren() {
-        HashSet<DungeonTree> grandchildren = new HashSet<>();
-        if (firstChild != null) {
-            grandchildren.addAll(firstChild.getChildren());
-        }
-        if (secondChild != null) {
-            grandchildren.addAll(secondChild.getChildren());
-        }
-        if (thirdChild != null) {
-            grandchildren.addAll(thirdChild.getChildren());
-        }
-        return grandchildren;
-    }
-
     public DungeonTree removeChild(int childIndex) {
         DungeonTree removed;
         if (childIndex == 0) {
@@ -338,6 +324,10 @@ public class DungeonTree {
             }
         }
         return hasStart && hasExit;
+    }
+
+    public int countChildren() {
+        return getChildren().size();
     }
 
     // --------------- copy ---------------

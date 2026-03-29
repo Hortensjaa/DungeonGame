@@ -7,10 +7,19 @@ import io.github.dungeon.generator.grid.GridDefinition;
 import io.github.dungeon.generator.grid.GridGenerator;
 import io.github.dungeon.generator.tree.DungeonTree;
 
+import java.util.Random;
+
 public final class GenerationUtils {
     static final int MAX_RETRIES = 20;
 
     public static GridDefinition generateFromFile(String dirName, int x, int y) {
+        return GridGenerator.generate(dirName, x, y, MAX_RETRIES);
+    }
+
+    public static GridDefinition generateFromFolder(String dirName) {
+        Random rand = new Random();
+        int x = rand.nextInt(0, 10);
+        int y = rand.nextInt(0, 10);
         return GridGenerator.generate(dirName, x, y, MAX_RETRIES);
     }
 
@@ -65,6 +74,6 @@ public final class GenerationUtils {
 
     // -------- test --------
     public static void main(String[] args) {
-        GridDefinition gridDefinition = runSaveAndGenerate(10_000);
+        GridDefinition gridDefinition = runSaveAndGenerate(1_000_000);
     }
 }

@@ -12,28 +12,13 @@ import java.util.function.ToDoubleFunction;
 public final class Fitness {
     // ------------------ quality ------------------
     // more -> better (up to 75% of max nodes)
-    static float countNodes(DungeonTree tree) {
-        int count = tree.countNodes();  // todo: rethink
+    private static float countNodes(DungeonTree tree) {
+        int count = tree.countNodes();
         float value = (float) count / Constants.MAX_NODES;
         return 1.0f - Math.abs(value - 0.75f);
     }
 
-    // ideal is ~4 grandchildren per node, to avoid deep backtracking
-    static float countGrandchildren(DungeonTree tree) {
-        List<DungeonTree> nodes = new ArrayList<>();
-        tree.collectNodes(nodes);
-
-        int penaltyCount = 0;
-        for (DungeonTree node : nodes) {
-            int grandchildCount = node.getGrandchildren().size();
-            penaltyCount += Math.abs(grandchildCount - 4);
-        }
-
-        float penalty = (float) penaltyCount / (float) (tree.countNodes() * 7);
-        return 1.0f - penalty;
-    }
-
-    static float nodesDiversity(DungeonTree tree) {
+    private static float nodesDiversity(DungeonTree tree) {
         List<DungeonTree> nodes = new ArrayList<>();
         tree.collectNodes(nodes);
 
@@ -54,7 +39,7 @@ public final class Fitness {
     }
 
     // which part of the dungeon is on the main path from start to exit; should be ~50%
-    static float startToExitPathLen(DungeonTree tree) {
+    private static float startToExitPathLen(DungeonTree tree) {
         List<DungeonTree> nodes = new ArrayList<>();
         tree.collectNodes(nodes);
 
@@ -78,12 +63,46 @@ public final class Fitness {
         return 1.0f - Math.abs(percent - 0.5f);
     }
 
-    // ------------------ controls ------------------
-    static float countNodesControl(DungeonTree tree) {
-        int count = tree.countNodes();
-        return (float) count / Constants.MAX_NODES;
+    public static float avgBranchingFactor(DungeonTree tree) {
+        List<DungeonTree> nodes = new ArrayList<>();
+        tree.collectNodes(nodes);
+        return average(
+            nodes.stream().filter(n -> n.countChildren() > 0).toList(),
+            DungeonTree::countChildren
+        ) / 3.0f;
     }
 
+    private static float averageRisk(DungeonTree tree) {
+        return average(getAllNodes(tree), n -> n.getType().getRisk());
+    }
+
+    private static float averageReward(DungeonTree tree) {
+        return average(getAllNodes(tree), n -> n.getType().getReward());
+    }
+
+    private static float averageRiskOnMainPath(DungeonTree tree) {
+        return average(getMainPath(tree), n -> n.getType().getRisk());
+    }
+
+    private static float averageRewardOnMainPath(DungeonTree tree) {
+        return average(getMainPath(tree), n -> n.getType().getReward());
+    }
+
+    public static float riskValue(DungeonTree tree) {
+        return averageRisk(tree) * 0.75f + averageRiskOnMainPath(tree) * 0.25f;
+    }
+
+    static float rewardValue(DungeonTree tree) {
+        return averageReward(tree) * 0.75f + averageRewardOnMainPath(tree) * 0.25f;
+    }
+
+    private static float balanceValue(DungeonTree tree) {
+        float risk = riskValue(tree);
+        float reward = rewardValue(tree);
+        return 1 - Math.abs(risk - reward);
+    }
+
+    // ------------------ controls ------------------
     // should have start and exit
     static float hasStartAndExitOnce(DungeonTree tree) {
         if (tree.hasStartAndExitOnce()) {
@@ -93,7 +112,6 @@ public final class Fitness {
         }
     }
 
-    // todo: maybe it should be more strict in later generations (eg. 80%+)
     static float canGenerateLayout(DungeonTree tree) {
         float successRate = 0f;
         for (int i = 0; i < 5; i++) {
@@ -109,25 +127,6 @@ public final class Fitness {
         } else {
             return 0f;
         }
-    }
-
-    // if there are more than 7 children, collisions are unavoidable
-    static float checkGrandchildren(DungeonTree tree) {
-        return checkGrandchildrenRec(tree) ? 1f : 0f;
-    }
-
-    private static boolean checkGrandchildrenRec(DungeonTree tree) {
-        if (tree.getGrandchildren().size() > 7) {
-            return false;
-        }
-
-        for (DungeonTree child : tree.getChildren()) {
-            if (!checkGrandchildrenRec(child)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     // ------------------ other ------------------
@@ -155,52 +154,18 @@ public final class Fitness {
         return path;
     }
 
-    private static float averageRisk(DungeonTree tree) {
-        return average(getAllNodes(tree), n -> n.getType().getRisk());
-    }
-
-    private static float averageReward(DungeonTree tree) {
-        return average(getAllNodes(tree), n -> n.getType().getReward());
-    }
-
-    private static float averageRiskOnMainPath(DungeonTree tree) {
-        return average(getMainPath(tree), n -> n.getType().getRisk());
-    }
-
-    private static float averageRewardOnMainPath(DungeonTree tree) {
-        return average(getMainPath(tree), n -> n.getType().getReward());
-    }
-
-    public static float riskValue(DungeonTree tree) {
-        return averageRisk(tree) * 0.75f + averageRiskOnMainPath(tree) * 0.25f;
-    }
-
-    public static float rewardValue(DungeonTree tree) {
-        return averageReward(tree) * 0.75f + averageRewardOnMainPath(tree) * 0.25f;
-    }
-
     // ------------- API -------------
-    private static float min(float... values) {
-        float min = Float.MAX_VALUE;
-        for (float v : values) {
-            if (v < min) {
-                min = v;
-            }
-        }
-        return min;
-    }
-
     private static float quality(DungeonTree tree) {
         return (
                 countNodes(tree)
                 + startToExitPathLen(tree)
-                + countGrandchildren(tree)
                 + nodesDiversity(tree)
+                + balanceValue(tree)
         ) / 4;
     }
 
     private static float control(DungeonTree tree) {
-        return min(hasStartAndExitOnce(tree), checkGrandchildren(tree), countNodesControl(tree), canGenerateLayout(tree));
+        return hasStartAndExitOnce(tree) * canGenerateLayout(tree);
     }
 
     public static float fitness(DungeonTree tree, boolean quality, boolean control) {
