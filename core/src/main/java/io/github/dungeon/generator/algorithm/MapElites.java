@@ -109,10 +109,10 @@ public final class MapElites {
         // -- initialize
         MapElitesArchive archive = new MapElitesArchive(
                 Fitness::riskValue,
-                Fitness::rewardValue,
+                Fitness::avgBranchingFactor,
                 tree -> Fitness.fitness(tree, true, true),
-                0.1f, 0.7f,
-                0.2f, 0.8f
+                0.1f, 0.8f,
+                0.3f, 0.7f
         );
         archive.populateArchive(BASE_POPULATION);
         // -- main loop
