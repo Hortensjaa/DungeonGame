@@ -45,7 +45,7 @@ public class Room {
         return new Coord((int) centerX, (int) centerY);
     }
 
-    public RoomContents getRoomContents(int[][] grid) {
+    public RoomContents getRoomContents() {
         return RoomPopulator.populate(this);
     }
 }

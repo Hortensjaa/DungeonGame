@@ -187,7 +187,7 @@ public class GridGenerator extends Generator {
         generator.placeRooms();
         generator.placeCorridors();
         for (Room room : generator.rooms.values()) {
-            RoomContents contents = room.getRoomContents(generator.grid);
+            RoomContents contents = room.getRoomContents();
             generator.enemies.putAll(contents.getEnemies());
             generator.rewards.putAll(contents.getRewards());
         }
