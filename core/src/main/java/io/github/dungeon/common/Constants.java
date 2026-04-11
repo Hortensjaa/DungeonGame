@@ -15,6 +15,8 @@ public class Constants {
     public static final int WALL = 0;
     public static final int ROOM = 1;
     public static final int CORRIDOR = 2;
+    public static final int ENTRANCE = 3;
+    public static final int EXIT = 4;
 
     //  grid constants (doesn't depend on CELL_SIZE)
     public static final int WALL_OFFSET = 1; // in cells
@@ -32,14 +34,11 @@ public class Constants {
     public static final int MAX_DEPTH = 5;
     public static final int MAX_NODES = MAX_LAYOUT_HEIGHT * MAX_LAYOUT_WIDTH;
 
-    //    rooms constraints
-    public static final float MAX_ENEMY_COVERAGE = 0.25f;
-    public static final float MAX_REWARD_COVERAGE = 0.25f;
-
     //    sprites
     public static final String WALL_SPRITE = "walls_32/tile_6.png";
     public static final String ROOM_SPRITE = "walls_32/tile_3.png";
     public static final String CORRIDOR_SPRITE = "walls_32/tile_14.png";
-    public static final String GOAL_SPRITE = "walls_32/tile_10.png";
+    public static final String EXIT_SPRITE = "walls_32/tile_1.png";
+    public static final String ENTRANCE_SPRITE = "walls_32/tile_10.png";
 
 }

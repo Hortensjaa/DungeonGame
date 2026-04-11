@@ -3,8 +3,8 @@ package io.github.dungeon.generator.tree;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.github.dungeon.generator.grid.LayoutField;
-import io.github.dungeon.generator.grid.LayoutGenerator;
+import io.github.dungeon.generator.layout.LayoutField;
+import io.github.dungeon.generator.layout.LayoutGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

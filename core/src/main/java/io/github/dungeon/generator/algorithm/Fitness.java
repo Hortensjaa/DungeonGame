@@ -2,7 +2,7 @@ package io.github.dungeon.generator.algorithm;
 
 
 import io.github.dungeon.common.Constants;
-import io.github.dungeon.generator.grid.LayoutGenerator;
+import io.github.dungeon.generator.layout.LayoutGenerator;
 import io.github.dungeon.generator.tree.DungeonTree;
 import io.github.dungeon.generator.tree.NodeTypes;
 

@@ -6,6 +6,8 @@ import io.github.dungeon.common.Coord;
 import io.github.dungeon.common.Direction;
 import io.github.dungeon.dungeon_game.danger.DangerType;
 import io.github.dungeon.dungeon_game.reward.RewardType;
+import io.github.dungeon.generator.layout.LayoutField;
+import io.github.dungeon.generator.layout.LayoutGenerator;
 import io.github.dungeon.generator.tree.DungeonTree;
 import io.github.dungeon.generator.tree.DungeonTreeSerializer;
 import io.github.dungeon.generator.tree.NodeTypes;
@@ -25,15 +27,12 @@ public class GridGenerator extends Generator {
     private final Map<Coord, DangerType> enemies = new HashMap<>(); // Map of enemy positions and their types
     private final Map<Coord, RewardType> rewards = new HashMap<>(); // Map of rewards positions and their types
     private int[][] grid; // The grid representation of the dungeon
-    private final Map<Coord, Room> rooms = new HashMap<>(); // center: room object
-    private final Set<Coord> entrances = new HashSet<>(); // fixme: debug
+    private final Map<Coord, Room> rooms = new HashMap<>(); // <center: room object>
 
     private final int trimmedH; // Height of the trimmed layout
     private final int trimmedW; // Width of the trimmed layout
     private final int partitionWidth; // Width of each partition in the grid
     private final int partitionHeight; // Height of each partition in the grid
-
-    private final boolean irregularRooms; // Flag to determine if rooms should be irregular
 
     /**
      * Constructor for GeneratorFromLayout.
@@ -46,8 +45,6 @@ public class GridGenerator extends Generator {
         trimmedW = layout[0].length;
         partitionWidth = Constants.COLUMNS / trimmedW;
         partitionHeight = Constants.ROWS / trimmedH;
-
-        irregularRooms = partitionWidth * partitionHeight >= Constants.IRREGULAR_ROOM_THRESHOLD;
     }
 
     /**
@@ -62,7 +59,7 @@ public class GridGenerator extends Generator {
 
     // ----------------------------------------------- ROOMS -----------------------------------------------
 
-    private void placeRegularRoom(Coord leftUpperCorner, float difficulty, float reward) {
+    private void placeRegularRoom(Coord leftUpperCorner) {
         int startX = (int) leftUpperCorner.getX() + Constants.WALL_OFFSET;
         int startY = (int) leftUpperCorner.getY() + Constants.WALL_OFFSET;
         int endX = startX + partitionWidth - 2 * Constants.WALL_OFFSET;
@@ -73,31 +70,6 @@ public class GridGenerator extends Generator {
                 grid[y][x] = Constants.ROOM;
             }
         }
-    }
-
-    private void roomFlooding(int x, int y, int startX, int startY, int endX, int endY, float pp) {
-        if (x < startX || x >= endX || y < startY || y >= endY) return;
-        if (grid[y][x] == Constants.ROOM) return;
-        float pp_multiplier = 0.95f;
-        if (Math.random() < pp) {
-            grid[y][x] = Constants.ROOM;
-            roomFlooding(x + 1, y, startX, startY, endX, endY, pp * pp_multiplier);
-            roomFlooding(x - 1, y, startX, startY, endX, endY, pp * pp_multiplier);
-            roomFlooding(x, y + 1, startX, startY, endX, endY, pp * pp_multiplier);
-            roomFlooding(x, y - 1, startX, startY, endX, endY, pp * pp_multiplier);
-        }
-    }
-
-    private void placeIrregularRoom(Coord leftUpperCorner, float difficulty, float reward) {
-        int startX = (int) leftUpperCorner.getX() + Constants.WALL_OFFSET;
-        int startY = (int) leftUpperCorner.getY() + Constants.WALL_OFFSET;
-        int endX = startX + partitionWidth - 2 * Constants.WALL_OFFSET;
-        int endY = startY + partitionHeight - 2 * Constants.WALL_OFFSET;
-
-        int centerX = (startX + endX) / 2;
-        int centerY = (startY + endY) / 2;
-
-        roomFlooding(centerX, centerY, startX, startY, endX, endY, 1.0f);
     }
 
     /**
@@ -113,23 +85,20 @@ public class GridGenerator extends Generator {
                 if (field == null) continue;
 
                 Coord leftUpperCorner = toGridCoords(new Coord(x, y));
-                if (!irregularRooms)
-                    placeRegularRoom(leftUpperCorner, field.type.getRisk(), field.type.getReward());
-                else
-                    placeIrregularRoom(leftUpperCorner, field.type.getRisk(), field.type.getReward());
+                placeRegularRoom(leftUpperCorner);
 
                 int centerX = (int) leftUpperCorner.getX() + partitionWidth / 2;
                 int centerY = (int) leftUpperCorner.getY() + partitionHeight / 2;
                 Coord center = new Coord(centerX, centerY);
                 // Track special rooms
-                if (field.type instanceof NodeTypes.Start) {
+                if (field.getType() instanceof NodeTypes.Start) {
                     playerStart = center;
-                } else if (field.type instanceof NodeTypes.Exit) {
+                } else if (field.getType() instanceof NodeTypes.Exit) {
                     exitPoint = center;
                 }
 
                 rooms.put(center, new Room((int) leftUpperCorner.getX(), (int) leftUpperCorner.getY(),
-                    partitionWidth, partitionHeight, grid, field.type.getRisk(), field.type.getReward()));
+                    partitionWidth, partitionHeight, field.getType().getRisk(), field.getType().getReward()));
             }
         }
     }
@@ -140,9 +109,17 @@ public class GridGenerator extends Generator {
         int x = (int) center.getX();
         int y = (int) center.getY();
 
-        int parent_x = x + direction.getDx() * partitionWidth;
-        int parent_y = y + direction.getDy() * partitionHeight;
+        int dx = direction.getDx();
+        int dy = direction.getDy();
 
+        x += dx * (partitionWidth / 2 - Constants.WALL_OFFSET);
+        y += dy * (partitionHeight / 2 - Constants.WALL_OFFSET);
+
+        int parent_x = x + dx * partitionWidth;
+        int parent_y = y + dy * partitionHeight;
+
+        grid[y - Math.max(dy, 0)][x - Math.max(dx, 0)] = Constants.ENTRANCE;
+        grid[y + dy * 2 * Constants.WALL_OFFSET + Math.min(dy, 0)][x + dx * 2 * Constants.WALL_OFFSET + Math.min(dx, 0)] = Constants.EXIT;
         while (x != parent_x || y != parent_y) {
             if (grid[y][x] == Constants.WALL) {
                 grid[y][x] = Constants.CORRIDOR;
@@ -168,7 +145,7 @@ public class GridGenerator extends Generator {
                 int centerY = (int) leftUpperCorner.getY() + partitionHeight / 2;
                 Coord center = new Coord(centerX, centerY);
 
-                if (field.parentDirection != null) placeCorridor(center, field.parentDirection);
+                if (field.getParentDirection() != null) placeCorridor(center, field.getParentDirection());
             }
         }
     }

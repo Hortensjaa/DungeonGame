@@ -1,4 +1,4 @@
-package io.github.dungeon.generator.grid;
+package io.github.dungeon.generator.layout;
 
 
 import io.github.dungeon.common.Constants;
@@ -24,7 +24,11 @@ public class LayoutGenerator {
         grid[y][x] = new LayoutField(node.getType(), directionFromParent);
 
         List<DungeonTree> children = new ArrayList<>(node.getChildren());
-        Collections.shuffle(children, RANDOM);  // Shuffle for diversity
+        children.sort((a, b) -> {
+            int diff = b.countNodes() - a.countNodes();  // biggest subtrees first
+            if (Math.abs(diff) > 3) return diff;
+            return RANDOM.nextInt(3) - 1;  // small randomness for similar sizes
+        });
         return tryPlaceChildren(grid, x, y, children, 0);
     }
 

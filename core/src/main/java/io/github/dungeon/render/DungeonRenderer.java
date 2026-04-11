@@ -27,7 +27,9 @@ public class DungeonRenderer implements Disposable {
     private final Map<Integer, Texture> gridTextures = Map.of(
         Constants.WALL, new Texture(Constants.WALL_SPRITE),
         Constants.ROOM, new Texture(Constants.ROOM_SPRITE),
-        Constants.CORRIDOR, new Texture(Constants.CORRIDOR_SPRITE)
+        Constants.CORRIDOR, new Texture(Constants.CORRIDOR_SPRITE),
+        Constants.EXIT, new Texture(Constants.EXIT_SPRITE),
+        Constants.ENTRANCE, new Texture(Constants.ENTRANCE_SPRITE)
     );
 
     public DungeonRenderer(DungeonGame game) {
