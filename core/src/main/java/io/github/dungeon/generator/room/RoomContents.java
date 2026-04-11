@@ -1,4 +1,4 @@
-package io.github.dungeon.generator.grid;
+package io.github.dungeon.generator.room;
 
 import io.github.dungeon.common.Coord;
 import io.github.dungeon.dungeon_game.danger.DangerType;

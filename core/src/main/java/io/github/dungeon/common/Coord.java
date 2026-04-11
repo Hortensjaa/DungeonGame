@@ -2,6 +2,8 @@ package io.github.dungeon.common;
 
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 public class Coord {
     private float x;
@@ -48,6 +50,6 @@ public class Coord {
 
     @Override
     public int hashCode() {
-        return (int) (31 * x + y);
+        return Objects.hash(Math.round(x), Math.round(y));
     }
 }

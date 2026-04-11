@@ -1,8 +1,9 @@
-package io.github.dungeon.generator.grid;
+package io.github.dungeon.generator.room;
 
 import io.github.dungeon.common.Constants;
 import io.github.dungeon.common.Coord;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +16,7 @@ public class Room {
     int partitionHeight;
     float difficulty;
     float reward;
-    private final Coord entrance = null;
+    @Setter private Coord entrance = null;
     private final Set<Coord> exits = new HashSet<>();
 
     public Room(
@@ -44,26 +45,7 @@ public class Room {
         return new Coord((int) centerX, (int) centerY);
     }
 
-    private boolean isCorridor(int x, int y, int[][] grid) {
-        return grid[y][x] == Constants.CORRIDOR;
-    }
-
-    private void findEntrances(int[][] grid) {
-        Coord end = getEnd();
-        for (int y = top; y < end.getY(); y++) {
-            for (int x = left; x < end.getX(); x++) {
-                if (isCorridor(x + 1, y, grid)
-                    || isCorridor(x - 1, y, grid)
-                    || isCorridor(x, y + 1, grid)
-                    || isCorridor(x, y - 1, grid)) {
-                    exits.add(new Coord(x, y));
-                }
-            }
-        }
-    }
-
     public RoomContents getRoomContents(int[][] grid) {
-        findEntrances(grid);
         return RoomPopulator.populate(this);
     }
 }

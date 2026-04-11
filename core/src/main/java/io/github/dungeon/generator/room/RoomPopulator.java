@@ -1,8 +1,4 @@
-package io.github.dungeon.generator.grid;
-
-import io.github.dungeon.common.Coord;
-
-import java.util.*;
+package io.github.dungeon.generator.room;
 
 
 public class RoomPopulator {

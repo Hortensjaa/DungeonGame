@@ -8,6 +8,8 @@ import io.github.dungeon.dungeon_game.danger.DangerType;
 import io.github.dungeon.dungeon_game.reward.RewardType;
 import io.github.dungeon.generator.layout.LayoutField;
 import io.github.dungeon.generator.layout.LayoutGenerator;
+import io.github.dungeon.generator.room.Room;
+import io.github.dungeon.generator.room.RoomContents;
 import io.github.dungeon.generator.tree.DungeonTree;
 import io.github.dungeon.generator.tree.DungeonTreeSerializer;
 import io.github.dungeon.generator.tree.NodeTypes;
@@ -103,25 +105,41 @@ public class GridGenerator extends Generator {
         }
     }
 
+    /** find room that have those coordinates inside */
+    private Room findRoom(int x, int y) {
+        int layoutX = x / partitionWidth;
+        int layoutY = y / partitionHeight;
+
+        int centerX = layoutX * partitionWidth + partitionWidth / 2;
+        int centerY = layoutY * partitionHeight + partitionHeight / 2;
+
+        return rooms.get(new Coord(centerX, centerY));
+    }
+
     // ----------------------------------------------- CORRIDORS -----------------------------------------------
 
     private void placeCorridor(Coord center, Direction direction) {
-        int x = (int) center.getX();
-        int y = (int) center.getY();
+        int center_x = (int) center.getX();
+        int center_y = (int) center.getY();
 
         int dx = direction.getDx();
         int dy = direction.getDy();
 
-        x += dx * (partitionWidth / 2 - Constants.WALL_OFFSET);
-        y += dy * (partitionHeight / 2 - Constants.WALL_OFFSET);
+        int x = center_x + dx * (partitionWidth / 2 - Constants.WALL_OFFSET);
+        int y = center_y + dy * (partitionHeight / 2 - Constants.WALL_OFFSET);
+
+        grid[y - Math.max(dy, 0)][x - Math.max(dx, 0)] = Constants.ENTRANCE;
+        Room room = rooms.get(new Coord(center_x, center_y));
+        room.setEntrance(new Coord(x - Math.max(dx, 0), y - Math.max(dy, 0)));
 
         int parent_x = x + dx * partitionWidth;
         int parent_y = y + dy * partitionHeight;
+        int exitX = x + dx * 2 * Constants.WALL_OFFSET + Math.min(dx, 0);
+        int exitY = y + dy * 2 * Constants.WALL_OFFSET + Math.min(dy, 0);
+        grid[exitY][exitX] = Constants.EXIT;
+        Room parentRoom = findRoom(parent_x, parent_y);
+        parentRoom.getExits().add(new Coord(exitX, exitY));
 
-        grid[y - Math.max(dy, 0)][x - Math.max(dx, 0)] = Constants.ENTRANCE;
-        grid[y + dy * 2 * Constants.WALL_OFFSET + Math.min(dy, 0)]
-            [x + dx * 2 * Constants.WALL_OFFSET + Math.min(dx, 0)]
-            = Constants.EXIT;
         while (x != parent_x || y != parent_y) {
             if (grid[y][x] == Constants.WALL) {
                 grid[y][x] = Constants.CORRIDOR;
