@@ -45,6 +45,47 @@ class DungeonTreeDTO {
 
 public class DungeonTreeSerializer {
 
+    private static DungeonTree findStartNode(DungeonTree root) {
+        Queue<DungeonTree> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            DungeonTree cur = queue.poll();
+            if (cur.getType() instanceof NodeTypes.Start) return cur;
+            queue.addAll(cur.getChildren());
+        }
+        return root; // fallback
+    }
+
+    private static DungeonTree rerootAtStart(DungeonTree originalRoot) {
+        DungeonTree copy = originalRoot.deepCopy();
+        DungeonTree start = findStartNode(copy);
+
+        // Collect path from start to root
+        List<DungeonTree> path = new ArrayList<>();
+        DungeonTree cur = start;
+        while (cur != null) {
+            path.add(cur);
+            cur = cur.getParent();
+        }
+
+        // Flip edges along the path
+        for (int i = 0; i < path.size() - 1; i++) {
+            DungeonTree child = path.get(i);
+            DungeonTree parent = path.get(i + 1);
+            parent.removeChild(getChildIndex(parent, child));
+            child.addChild(parent);
+        }
+
+        return start;
+    }
+
+    private static int getChildIndex(DungeonTree parent, DungeonTree child) {
+        if (parent.getFirstChild() == child) return 0;
+        if (parent.getSecondChild() == child) return 1;
+        if (parent.getThirdChild() == child) return 2;
+        throw new IllegalArgumentException("Node is not a child of the given parent");
+    }
+
     private static DungeonTreeDTO serialize(DungeonTree root, float fitness) {
         Map<DungeonTree, Integer> ids = new IdentityHashMap<>();
         List<NodeDTO> nodes = new ArrayList<>();
@@ -150,9 +191,9 @@ public class DungeonTreeSerializer {
 
     public static void writeToFile(DungeonTree tree, float fitness, File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper()
-                .enable(SerializationFeature.INDENT_OUTPUT);
-
-        mapper.writeValue(file, serialize(tree, fitness));
+            .enable(SerializationFeature.INDENT_OUTPUT);
+        DungeonTree rerooted = rerootAtStart(tree);
+        mapper.writeValue(file, serialize(rerooted, fitness));
     }
 
     public static DungeonTree readFromFile(File file) throws IOException {

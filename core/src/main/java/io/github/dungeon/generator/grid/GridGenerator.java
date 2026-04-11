@@ -119,7 +119,9 @@ public class GridGenerator extends Generator {
         int parent_y = y + dy * partitionHeight;
 
         grid[y - Math.max(dy, 0)][x - Math.max(dx, 0)] = Constants.ENTRANCE;
-        grid[y + dy * 2 * Constants.WALL_OFFSET + Math.min(dy, 0)][x + dx * 2 * Constants.WALL_OFFSET + Math.min(dx, 0)] = Constants.EXIT;
+        grid[y + dy * 2 * Constants.WALL_OFFSET + Math.min(dy, 0)]
+            [x + dx * 2 * Constants.WALL_OFFSET + Math.min(dx, 0)]
+            = Constants.EXIT;
         while (x != parent_x || y != parent_y) {
             if (grid[y][x] == Constants.WALL) {
                 grid[y][x] = Constants.CORRIDOR;

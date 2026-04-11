@@ -13,7 +13,7 @@ public final class GenerationUtils {
     static final int MAX_RETRIES = 20;
 
     public static GridDefinition generateFromFile(String dirName, int x, int y) {
-        return GridGenerator.generate(dirName, x, y, MAX_RETRIES);
+        return GridGenerator.generate(dirName, x, y, 50);
     }
 
     public static GridDefinition generateFromFolder(String dirName) {

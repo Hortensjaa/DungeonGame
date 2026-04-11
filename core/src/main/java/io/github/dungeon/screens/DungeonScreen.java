@@ -18,7 +18,7 @@ public class DungeonScreen implements Screen, InputProcessor {
     private Action currentAction = Action.STAY;
 
     public DungeonScreen(Game gdxGame) {
-        GridDefinition def = GenerationUtils.generateFromFile("202603291437", 8, 5);
+        GridDefinition def = GenerationUtils.generateFromFile("202604111244", 8, 5);
         this.game = new DungeonGame(def);
         this.renderer = new DungeonRenderer(game);
         this.uiRenderer = new UIRenderer(game.getPlayer());

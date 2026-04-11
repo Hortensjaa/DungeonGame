@@ -1,18 +1,42 @@
 {
   "fitness" : -1.0,
   "nodes" : [ {
+    "id" : 1,
+    "type" : "Enemies",
+    "difficulty" : 0.28802553,
+    "reward" : 0.0
+  }, {
+    "id" : 4,
+    "type" : "Exit",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 2,
+    "type" : "Enemies",
+    "difficulty" : 0.8749673,
+    "reward" : 0.0
+  }, {
     "id" : 0,
     "type" : "Start",
     "difficulty" : 0.0,
     "reward" : 0.0
   }, {
-    "id" : 1,
-    "type" : "Exit",
-    "difficulty" : 0.0,
-    "reward" : 0.0
+    "id" : 3,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.63110626,
+    "reward" : 0.7067017
   } ],
   "edges" : [ {
+    "from" : 1,
+    "to" : 2
+  }, {
+    "from" : 1,
+    "to" : 3
+  }, {
     "from" : 0,
     "to" : 1
+  }, {
+    "from" : 3,
+    "to" : 4
   } ]
 }

@@ -121,12 +121,11 @@ public class LayoutGenerator {
     }
 
     public static LayoutField[][] generateLayout(DungeonTree root, int max_retries) throws IllegalArgumentException {
-        int centerX = Constants.MAX_LAYOUT_WIDTH / 2;
-        int centerY = Constants.MAX_LAYOUT_HEIGHT / 2;
-
         for (int attempt = 0; attempt < max_retries; attempt++) {
+            int startX = RANDOM.nextInt(Constants.MAX_LAYOUT_WIDTH / 2) + Constants.MAX_LAYOUT_WIDTH / 4;
+            int startY = RANDOM.nextInt(Constants.MAX_LAYOUT_HEIGHT / 2) + Constants.MAX_LAYOUT_HEIGHT / 4;
             LayoutField[][] grid = new LayoutField[Constants.MAX_LAYOUT_HEIGHT][Constants.MAX_LAYOUT_WIDTH];
-            if (generateLayout(root, grid, centerX, centerY, null)) {
+            if (generateLayout(root, grid, startX, startY, null)) {
                 return trim(grid);  // Success with this shuffle and root position
             }
             // If all root positions failed, retry with new shuffles (next attempt)

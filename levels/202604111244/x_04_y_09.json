@@ -1,0 +1,154 @@
+{
+  "fitness" : 0.8713173,
+  "nodes" : [ {
+    "id" : 1,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.7191312
+  }, {
+    "id" : 3,
+    "type" : "Enemies",
+    "difficulty" : 0.45348772,
+    "reward" : 0.0
+  }, {
+    "id" : 11,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.24356055
+  }, {
+    "id" : 2,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 15,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.7493849,
+    "reward" : 0.96155816
+  }, {
+    "id" : 16,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.7192869
+  }, {
+    "id" : 4,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.19361867
+  }, {
+    "id" : 12,
+    "type" : "Enemies",
+    "difficulty" : 0.9570835,
+    "reward" : 0.0
+  }, {
+    "id" : 9,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9286151,
+    "reward" : 0.884978
+  }, {
+    "id" : 6,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 13,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.76512897
+  }, {
+    "id" : 7,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.5656238,
+    "reward" : 0.47860432
+  }, {
+    "id" : 8,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.4787541,
+    "reward" : 0.7581992
+  }, {
+    "id" : 5,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.8305954,
+    "reward" : 0.7428422
+  }, {
+    "id" : 0,
+    "type" : "Start",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 10,
+    "type" : "Enemies",
+    "difficulty" : 0.53607035,
+    "reward" : 0.0
+  }, {
+    "id" : 14,
+    "type" : "Empty",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 17,
+    "type" : "Exit",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 18,
+    "type" : "Enemies",
+    "difficulty" : 0.9702087,
+    "reward" : 0.0
+  } ],
+  "edges" : [ {
+    "from" : 1,
+    "to" : 2
+  }, {
+    "from" : 1,
+    "to" : 3
+  }, {
+    "from" : 3,
+    "to" : 4
+  }, {
+    "from" : 3,
+    "to" : 5
+  }, {
+    "from" : 15,
+    "to" : 17
+  }, {
+    "from" : 15,
+    "to" : 18
+  }, {
+    "from" : 4,
+    "to" : 6
+  }, {
+    "from" : 4,
+    "to" : 7
+  }, {
+    "from" : 12,
+    "to" : 13
+  }, {
+    "from" : 12,
+    "to" : 14
+  }, {
+    "from" : 9,
+    "to" : 12
+  }, {
+    "from" : 13,
+    "to" : 15
+  }, {
+    "from" : 13,
+    "to" : 16
+  }, {
+    "from" : 8,
+    "to" : 10
+  }, {
+    "from" : 8,
+    "to" : 11
+  }, {
+    "from" : 5,
+    "to" : 8
+  }, {
+    "from" : 5,
+    "to" : 9
+  }, {
+    "from" : 0,
+    "to" : 1
+  } ]
+}

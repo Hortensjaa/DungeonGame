@@ -38,7 +38,7 @@ public class Constants {
     public static final String WALL_SPRITE = "walls_32/tile_6.png";
     public static final String ROOM_SPRITE = "walls_32/tile_3.png";
     public static final String CORRIDOR_SPRITE = "walls_32/tile_14.png";
-    public static final String EXIT_SPRITE = "walls_32/tile_1.png";
-    public static final String ENTRANCE_SPRITE = "walls_32/tile_10.png";
+    public static final String EXIT_SPRITE = "walls_32/exit.png";
+    public static final String ENTRANCE_SPRITE = "walls_32/entrance.png";
 
 }
