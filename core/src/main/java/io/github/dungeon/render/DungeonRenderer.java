@@ -28,8 +28,8 @@ public class DungeonRenderer implements Disposable {
         Constants.WALL, new Texture(Constants.WALL_SPRITE),
         Constants.ROOM, new Texture(Constants.ROOM_SPRITE),
         Constants.CORRIDOR, new Texture(Constants.CORRIDOR_SPRITE),
-        Constants.EXIT, new Texture(Constants.EXIT_SPRITE),
-        Constants.ENTRANCE, new Texture(Constants.ENTRANCE_SPRITE)
+        Constants.EXIT, new Texture(Constants.ROOM_SPRITE),
+        Constants.ENTRANCE, new Texture(Constants.ROOM_SPRITE)
     );
 
     public DungeonRenderer(DungeonGame game) {
@@ -73,11 +73,7 @@ public class DungeonRenderer implements Disposable {
         float cellX = c.getX() * Constants.CELL_SIZE - 0.5f * Constants.CELL_SIZE ;
         float cellY = c.getY() * Constants.CELL_SIZE - 0.5f * Constants.CELL_SIZE ;
 
-        // Center the 64x64 portal in the cell
-        float drawX = cellX + (Constants.CELL_SIZE - Constants.CELL_SIZE) / 2f;
-        float drawY = cellY + (Constants.CELL_SIZE - Constants.CELL_SIZE) / 2f;
-
-        batch.draw(frame, drawX, drawY, Constants.CELL_SIZE * 2, Constants.CELL_SIZE * 2);
+        batch.draw(frame, cellX, cellY, Constants.CELL_SIZE * 2, Constants.CELL_SIZE * 2);
     }
 
     private void drawGrid() {

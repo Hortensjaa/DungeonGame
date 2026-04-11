@@ -64,28 +64,28 @@ class RoomInfluenceMap {
         int startY = (int) entrance.getY() - top;
         dist[startX][startY] = influence[startX][startY];
 
-        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[2]));
-        pq.offer(new int[]{startX, startY, 0});
+        PriorityQueue<float[]> pq = new PriorityQueue<>(Comparator.comparingDouble(a -> a[2]));
+        pq.offer(new float[]{startX, startY, 0});
 
         int[] dx = {0, 0, 1, -1};
         int[] dy = {1, -1, 0, 0};
 
         while (!pq.isEmpty()) {
-            int[] cur = pq.poll();
-            int cx = cur[0], cy = cur[1];
-            float curDist = Float.intBitsToFloat(cur[2]);
+            float[] cur = pq.poll();
+            float cx = cur[0], cy = cur[1];
+            float curDist = cur[2];
 
-            if (curDist > dist[cx][cy]) continue;
+            if (curDist > dist[(int) cx][(int) cy]) continue;
 
             for (int d = 0; d < 4; d++) {
-                int nx = cx + dx[d];
-                int ny = cy + dy[d];
+                int nx = (int) cx + dx[d];
+                int ny =(int)  cy + dy[d];
                 if (!inBounds(nx, ny, width, height)) continue;
 
-                float newDist = Math.min(1.0f, dist[cx][cy] + influence[nx][ny]);
+                float newDist = Math.min(1.0f, dist[(int) cx][(int) cy] + influence[nx][ny]);
                 if (newDist < dist[nx][ny]) {
                     dist[nx][ny] = newDist;
-                    pq.offer(new int[]{nx, ny, Float.floatToIntBits(newDist)});
+                    pq.offer(new float[]{nx, ny, newDist});
                 }
             }
         }
@@ -138,19 +138,12 @@ public class RoomPopulator {
 
         for (int i = 0; i < enemyCount; i++) {
             Coord pos = randomInteriorCoord(random, left, top, right, bottom);
-            double roll = random.nextDouble();
-            if (roll < 0.4) {
-                contents.addTrap(pos);
-            } else if (roll < 0.7) {
-                contents.addLizardX(pos);
-            } else {
-                contents.addLizardY(pos);
-            }
+            contents.addRandomHazard(pos);
         }
 
         for (int i = 0; i < rewardCount; i++) {
             Coord pos = randomInteriorCoord(random, left, top, right, bottom);
-            contents.addCoin(pos);
+            contents.addRandomReward(pos);
         }
 
         return contents;
@@ -162,12 +155,29 @@ public class RoomPopulator {
         return new Coord(x, y);
     }
 
+    private static float score(Room room, RoomContents contents, float[][] influence) {
+        List<Float> values = collectKeyValues(room, contents, influence);
+        if (values.isEmpty()) return 0f;
+
+        boolean anyMax = values.stream().anyMatch(v -> v >= 1.0f);
+        if (anyMax) return Float.MAX_VALUE;
+
+        float avg = average(values);
+        float variance = variance(values);
+        float avgError = Math.abs(avg - room.getDifficulty());
+
+        return avgError + variance;
+    }
+
     public static RoomContents populate(Room room) {
         RoomContents contents = initializeRandomly(room);
 
         int maxTries = 25;
+        float[][] influence = RoomInfluenceMap.compute(room, contents);
+        float currentScore = score(room, contents, influence);
+
         for (int i = 0; i < maxTries; i++) {
-            float[][] influence = RoomInfluenceMap.compute(room, contents);
+            if (currentScore == 0f) break;
 
             List<Float> values = collectKeyValues(room, contents, influence);
             if (values.isEmpty()) break;
@@ -176,25 +186,27 @@ public class RoomPopulator {
             float variance = variance(values);
             boolean anyMax = values.stream().anyMatch(v -> v >= 1.0f);
 
-            float targetDifficulty = room.getDifficulty();
-
+            RoomContents candidate = contents.deepcopy();
             if (anyMax) {
-                // unreachable rewards/exits — remove a random hazard
-                removeRandomHazard(contents);
-            } else if (avg < targetDifficulty - 0.2f) {
-                // too easy — add a hazard
-                addRandomHazard(room, contents);
-            } else if (avg > targetDifficulty + 0.2f) {
-                // too hard — remove a hazard
-                removeRandomHazard(contents);
+                removeRandomHazard(candidate);
+            } else if (avg < room.getDifficulty() - 0.2f) {
+                addRandomHazard(room, candidate);
+            } else if (avg > room.getDifficulty() + 0.2f) {
+                removeRandomHazard(candidate);
             } else if (variance > 0.1f) {
-                // too uneven — nudge a random hazard
-                nudgeRandomHazard(room, contents);
+                nudgeRandomHazard(room, candidate);
             } else {
-                break; // good enough
+                break;
+            }
+
+            float[][] candidateInfluence = RoomInfluenceMap.compute(room, candidate);
+            float candidateScore = score(room, candidate, candidateInfluence);
+            if (candidateScore < currentScore) {
+                contents = candidate;
+                influence = candidateInfluence;
+                currentScore = candidateScore;
             }
         }
-
         return contents;
     }
 
@@ -233,10 +245,7 @@ public class RoomPopulator {
         Random random = new Random();
         Coord end = room.getEnd();
         Coord pos = randomInteriorCoord(random, room.getLeft(), room.getTop(), (int) end.getX(), (int) end.getY());
-        double roll = random.nextDouble();
-        if (roll < 0.4) contents.addTrap(pos);
-        else if (roll < 0.7) contents.addLizardX(pos);
-        else contents.addLizardY(pos);
+        contents.addRandomHazard(pos);
     }
 
     private static void nudgeRandomHazard(Room room, RoomContents contents) {

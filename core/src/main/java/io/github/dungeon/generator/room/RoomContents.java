@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Getter
 @NoArgsConstructor
@@ -19,15 +20,41 @@ public class RoomContents {
         enemies.put(position, DangerType.FIRE);
     }
 
-    public void addLizardX(Coord position) {
+    public void addEnemyX(Coord position) {
         enemies.put(position, DangerType.LIZARD_HORIZONTAL);
     }
 
-    public void addLizardY(Coord position) {
+    public void addEnemyY(Coord position) {
         enemies.put(position, DangerType.LIZARD_VERTICAL);
     }
 
     public void addCoin(Coord position) {
         rewards.put(position, RewardType.COIN);
+    }
+
+    public void addPotion(Coord position) {
+        rewards.put(position, RewardType.HEALTH_POTION);
+    }
+
+    public void addRandomHazard(Coord position) {
+        Random random = new Random();
+        double roll = random.nextDouble();
+        if (roll < 0.5) addTrap(position);
+        else if (roll < 0.75) addEnemyX(position);
+        else addEnemyY(position);
+    }
+
+    public void addRandomReward(Coord position) {
+        Random random = new Random();
+        double roll = random.nextDouble();
+        if (roll < 0.9) addCoin(position);
+        else addPotion(position);
+    }
+
+    public RoomContents deepcopy() {
+        RoomContents copy = new RoomContents();
+        getEnemies().forEach((coord, type) -> copy.getEnemies().put(coord, type));
+        getRewards().forEach((coord, type) -> copy.getRewards().put(coord, type));
+        return copy;
     }
 }
