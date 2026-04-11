@@ -10,6 +10,7 @@ import io.github.dungeon.generator.layout.LayoutField;
 import io.github.dungeon.generator.layout.LayoutGenerator;
 import io.github.dungeon.generator.room.Room;
 import io.github.dungeon.generator.room.RoomContents;
+import io.github.dungeon.generator.room.RoomPopulator;
 import io.github.dungeon.generator.tree.DungeonTree;
 import io.github.dungeon.generator.tree.DungeonTreeSerializer;
 import io.github.dungeon.generator.tree.NodeTypes;
@@ -187,6 +188,7 @@ public class GridGenerator extends Generator {
         generator.placeRooms();
         generator.placeCorridors();
         for (Room room : generator.rooms.values()) {
+            RoomPopulator.populate(room);
             RoomContents contents = room.getRoomContents();
             generator.enemies.putAll(contents.getEnemies());
             generator.rewards.putAll(contents.getRewards());
