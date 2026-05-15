@@ -1,12 +1,16 @@
 package io.github.dungeon;
 
 import com.badlogic.gdx.Game;
-import io.github.dungeon.screens.DungeonScreen;
+import io.github.dungeon.screens.MenuScreen;
+import lombok.Getter;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
+    @Getter
+    private static Main instance;
+
     @Override
     public void create() {
-        setScreen(new DungeonScreen(this));
+        instance = this;
+        setScreen(new MenuScreen());
     }
 }

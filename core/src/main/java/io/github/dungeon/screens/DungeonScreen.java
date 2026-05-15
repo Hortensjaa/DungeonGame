@@ -3,6 +3,7 @@ package io.github.dungeon.screens;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
+import io.github.dungeon.Main;
 import io.github.dungeon.common.Action;
 import io.github.dungeon.dungeon_game.DungeonGame;
 import io.github.dungeon.generator.GenerationUtils;
@@ -18,7 +19,7 @@ public class DungeonScreen implements Screen, InputProcessor {
     private Action currentAction = Action.STAY;
 
     public DungeonScreen(Game gdxGame) {
-        GridDefinition def = GenerationUtils.generateFromFile("202604111244", 8, 4);
+        GridDefinition def = GenerationUtils.generateFromFile("202604111244", 5, 4);
         this.game = new DungeonGame(def);
         this.renderer = new DungeonRenderer(game);
         this.uiRenderer = new UIRenderer(game.getPlayer());
@@ -40,7 +41,13 @@ public class DungeonScreen implements Screen, InputProcessor {
         }
         game.update(delta);      // logic
         renderer.render();      // drawing
-//        uiRenderer.render();    // UI (bars, score)
+        uiRenderer.render();    // UI (bars, score)
+
+        if (game.hasWon()) {
+            Main.getInstance().setScreen(new VictoryScreen());
+        } else if (game.getPlayer().getHp() <= 0) {
+            io.github.dungeon.Main.getInstance().setScreen(new YouDiedScreen());
+        }
     }
 
     @Override

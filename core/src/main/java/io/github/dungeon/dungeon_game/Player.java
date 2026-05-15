@@ -9,9 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Player extends Character {
-    @Getter private static final int MAX_HP = 100;
+    @Getter private static final int MAX_HP = 500;
     @Getter private static final int MAX_STAMINA = 50;
-    private static final float HIT_COOLDOWN = 2.0f; // seconds
+    private static final float HIT_COOLDOWN = 1.0f; // seconds
 
     private float cooldown = 0;
 
@@ -59,10 +59,10 @@ public class Player extends Character {
         triggerCooldown();
     }
 
-    public boolean decreaseHp(int value) {
+    public boolean decreaseHp() {
         if (!canBeHit()) return false;
 
-        this.hp -= value;
+        this.hp -= 1;
         triggerCooldown();
         return this.hp <= 0;
     }

@@ -11,6 +11,7 @@ import io.github.dungeon.dungeon_game.game_objects.Interactable;
 import io.github.dungeon.dungeon_game.reward.Reward;
 import io.github.dungeon.generator.grid.GridDefinition;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ public class DungeonGame {
     private final int[][] grid;
     private final Player player;
     private final Goal exit;
+    @Setter boolean gameWon = false;
     private final List<Interactable> interactables;
 
     public DungeonGame(GridDefinition def) {
@@ -61,6 +63,7 @@ public class DungeonGame {
 
         if (exit.getPosition().equals(playerPos)) {
             exit.onInteraction(player);
+            gameWon = true;
             return;
         }
 
@@ -93,7 +96,7 @@ public class DungeonGame {
     }
 
     public boolean hasWon() {
-        return player.getPosition().equals(exit);
+        return gameWon;
     }
 
     private boolean isOutOfBounds(GameObject o) {

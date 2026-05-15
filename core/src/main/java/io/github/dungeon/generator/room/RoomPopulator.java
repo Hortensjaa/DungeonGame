@@ -18,6 +18,15 @@ class RoomInfluenceMap {
         return applyDijkstra(influence, room.getEntrance(), left, top, width, height);
     }
 
+    private static float clamp(float value, float min, float max) {
+        if (value < min) {
+            return min;
+        } else if (value > max) {
+            return max;
+        }
+        return value;
+    }
+
     private static float[][] buildInfluenceTable(RoomContents contents, int left, int top, int width, int height) {
         float[][] influence = new float[width][height];
 
@@ -41,12 +50,12 @@ class RoomInfluenceMap {
                 case LIZARD_HORIZONTAL -> {
                     for (int x = 0; x < width; x++)
                         if (inBounds(x, ey, width, height))
-                            influence[x][ey] = Math.min(1.0f, influence[x][ey] + 1.0f / width + 0.2f);
+                            influence[x][ey] = clamp(1.0f, influence[x][ey] + 1.0f / width, 0.2f);
                 }
                 case LIZARD_VERTICAL -> {
                     for (int y = 0; y < height; y++)
                         if (inBounds(ex, y, width, height))
-                            influence[ex][y] = Math.min(1.0f, influence[ex][y] + 1.0f / height + 0.2f);
+                            influence[ex][y] = clamp(1.0f, influence[ex][y] + 1.0f / height, 0.2f);
                 }
             }
         }
@@ -112,7 +121,7 @@ class RoomInfluenceMap {
 
 public class RoomPopulator {
     static final int difficultyMultiplier = 5;
-    static final int rewardMultiplier = 5;
+    static final int rewardMultiplier = 10;
 
     static private int influenceX(int x, int left) {
         return x - left;
