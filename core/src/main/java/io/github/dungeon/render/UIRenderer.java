@@ -16,10 +16,11 @@ public class UIRenderer implements Disposable {
     private final SpriteBatch batch;
     private final BitmapFont font;
     OrthographicCamera uiCamera;
+    private final int level;
 
-
-    public UIRenderer(Player player) {
+    public UIRenderer(Player player, int level) {
         this.player = player;
+        this.level = level;
         this.shapeRenderer = new ShapeRenderer();
         this.batch = new SpriteBatch();
         this.font = new BitmapFont();
@@ -45,7 +46,7 @@ public class UIRenderer implements Disposable {
         float h = uiCamera.viewportHeight;
 
         batch.begin();
-        font.draw(batch, "Score: " + player.getScore(), 20, h - 10);
+        font.draw(batch, "Level: " + level + "   Score: " + player.getScore(), 20, h - 10);
         batch.end();
     }
 
@@ -79,4 +80,3 @@ public class UIRenderer implements Disposable {
         font.dispose();
     }
 }
-

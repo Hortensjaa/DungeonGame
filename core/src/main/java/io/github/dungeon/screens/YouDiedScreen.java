@@ -46,8 +46,11 @@ public class YouDiedScreen implements Screen {
         stage.addAction(Actions.sequence(
             Actions.delay(5f),
             Actions.fadeOut(2f),
-            Actions.run(() -> Main.getInstance().setScreen(new MenuScreen()))
-        ));
+            Actions.run(() -> {
+                Main.getInstance().setLevel(1);
+                Main.getInstance().setScreen(new MenuScreen());
+            }
+        )));
         stage.addActor(title);
     }
 

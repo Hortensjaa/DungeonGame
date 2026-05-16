@@ -44,9 +44,18 @@ public class VictoryScreen implements Screen {
         title.getColor().a = 0f;
         title.addAction(Actions.fadeIn(2f));
         stage.addAction(Actions.sequence(
-            Actions.delay(5f),
+            Actions.delay(3f),
             Actions.fadeOut(2f),
-            Actions.run(() -> Main.getInstance().setScreen(new MenuScreen()))
+            Actions.run(() -> {
+                int currentLevel = Main.getInstance().getLevel();
+                if (currentLevel < 5) {
+                    Main.getInstance().setLevel(currentLevel + 1);
+                    Main.getInstance().setScreen(new DungeonScreen(Main.getInstance()));
+                } else {
+                    Main.getInstance().setLevel(1);
+                    Main.getInstance().setScreen(new MenuScreen());
+                }
+            })
         ));
         stage.addActor(title);
     }

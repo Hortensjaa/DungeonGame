@@ -1,5 +1,9 @@
 package io.github.dungeon.screens;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,6 +15,7 @@ import io.github.dungeon.generator.grid.GridDefinition;
 import io.github.dungeon.render.DungeonRenderer;
 import io.github.dungeon.render.UIRenderer;
 
+
 public class DungeonScreen implements Screen, InputProcessor {
 
     private final DungeonGame game;
@@ -18,11 +23,23 @@ public class DungeonScreen implements Screen, InputProcessor {
     private final DungeonRenderer renderer;
     private Action currentAction = Action.STAY;
 
-    public DungeonScreen(Game gdxGame) {
-        GridDefinition def = GenerationUtils.generateFromFile("202604111244", 5, 4);
+    public DungeonScreen(Main gdxGame) {
+        long startTime = System.currentTimeMillis();
+        GridDefinition def = null;
+        while (def == null) {
+            try {
+                def = GenerationUtils.generateGivenDifficulty("202604111244", gdxGame.getLevel());
+            } catch (Exception e) {
+                System.out.println("Generation failed, retrying...");
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        System.out.println("Generation took: " + duration + " ms");
+        GenerationTimeLogger.log(gdxGame.getLevel(), duration);
         this.game = new DungeonGame(def);
         this.renderer = new DungeonRenderer(game);
-        this.uiRenderer = new UIRenderer(game.getPlayer());
+        this.uiRenderer = new UIRenderer(game.getPlayer(), gdxGame.getLevel());
         Gdx.input.setInputProcessor(this);
     }
 
@@ -131,4 +148,15 @@ public class DungeonScreen implements Screen, InputProcessor {
         return true;
     }
 
+}
+
+class GenerationTimeLogger {
+    public static void log(int level, long timeMs) {
+        try (FileWriter fw = new FileWriter("generation_times.txt", true);
+             PrintWriter pw = new PrintWriter(fw)) {
+            pw.println( level + ", " + timeMs);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

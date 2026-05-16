@@ -11,8 +11,15 @@ import java.util.Random;
 
 public final class GenerationUtils {
     static final int MAX_RETRIES = 20;
+    static final Random RANDOM = new Random();
 
     public static GridDefinition generateFromFile(String dirName, int x, int y) {
+        return GridGenerator.generate(dirName, x, y, 100);
+    }
+
+    public static GridDefinition generateGivenDifficulty(String dirName, int difficulty) {
+        int x = ((difficulty - 1) * 2) + RANDOM.nextInt(2);
+        int y = RANDOM.nextInt(10);
         return GridGenerator.generate(dirName, x, y, 100);
     }
 

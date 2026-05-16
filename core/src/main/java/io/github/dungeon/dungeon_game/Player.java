@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Player extends Character {
-    @Getter private static final int MAX_HP = 500;
+    @Getter private static final int MAX_HP = 5;
     @Getter private static final int MAX_STAMINA = 50;
     private static final float HIT_COOLDOWN = 1.0f; // seconds
 
