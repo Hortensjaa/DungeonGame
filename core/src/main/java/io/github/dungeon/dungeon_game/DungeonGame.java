@@ -16,7 +16,8 @@ import lombok.Setter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.util.Set;
+import java.util.HashSet;
 
 @Getter
 public class DungeonGame {
@@ -26,11 +27,16 @@ public class DungeonGame {
     private final Goal exit;
     @Setter boolean gameWon = false;
     private final List<Interactable> interactables;
+    private final int partitionWidth;
+    private final int partitionHeight;
+    private final Set<String> visitedPartitions = new HashSet<>();
 
     public DungeonGame(GridDefinition def) {
         this.grid = def.getGrid();
         this.player = new Player(def.getPlayerStart());
         this.exit = new Goal(def.getExit());
+        this.partitionWidth = def.getPartitionWidth();
+        this.partitionHeight = def.getPartitionHeight();
         this.interactables = def.getDangers().entrySet()
                 .stream()
                 .map(entry -> {
@@ -44,6 +50,19 @@ public class DungeonGame {
         interactables.addAll(def.getRewards().entrySet().stream().map(
             entry -> new Reward(entry.getValue(), entry.getKey())
         ).toList());
+        updateVisitedPartitions(player.getPosition());
+    }
+
+    private void updateVisitedPartitions(Coord position) {
+        int x = (int) position.getX() / partitionWidth;
+        int y = (int) position.getY() / partitionHeight;
+        visitedPartitions.add(x + "," + y);
+    }
+
+    public boolean isPartitionVisited(int cellX, int cellY) {
+        int px = cellX / partitionWidth;
+        int py = cellY / partitionHeight;
+        return visitedPartitions.contains(px + "," + py);
     }
 
     public boolean move(Action action) {
@@ -53,6 +72,7 @@ public class DungeonGame {
             player.undoMove();
             return false;
         }
+        updateVisitedPartitions(player.getPosition());
         return true;
     }
 

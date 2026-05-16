@@ -68,6 +68,7 @@ public class DungeonRenderer implements Disposable {
     private void drawGoal() {
         Goal goal = game.getExit();
         Coord c = goal.getPosition();
+        if (!game.isPartitionVisited((int) c.getX(), (int) c.getY())) return;
         TextureRegion frame = goal.getCurrentFrame();
 
         float cellX = c.getX() * Constants.CELL_SIZE - 0.5f * Constants.CELL_SIZE ;
@@ -81,6 +82,7 @@ public class DungeonRenderer implements Disposable {
 
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[0].length; x++) {
+                if (!game.isPartitionVisited(x, y)) continue;
                 Texture t = gridTextures.get(grid[y][x]);
                 batch.draw(t, x * Constants.CELL_SIZE, y * Constants.CELL_SIZE);
             }
@@ -102,6 +104,7 @@ public class DungeonRenderer implements Disposable {
         game.getInteractables().sort(Comparator.comparingInt(Interactable::getDrawLayer));
         for (Interactable e : game.getInteractables()) {
             Coord c = e.getPosition();
+            if (!game.isPartitionVisited((int) c.getX(), (int) c.getY())) continue;
             TextureRegion t = e.getCurrentFrame();
 
             float cellX = c.getX() * Constants.CELL_SIZE;
@@ -145,4 +148,3 @@ public class DungeonRenderer implements Disposable {
         }
     }
 }
-

@@ -200,6 +200,8 @@ public class GridGenerator extends Generator {
                 .exit(generator.exitPoint)
                 .dangers(generator.enemies)
                 .rewards(generator.rewards)
+                .partitionWidth(generator.partitionWidth)
+                .partitionHeight(generator.partitionHeight)
                 .build();
     }
 

@@ -34,6 +34,12 @@ public class GridDefinition {
     @Builder.Default
     private final Map<Coord, RewardType> rewards = new HashMap<>();
 
+    @Builder.Default
+    private final int partitionWidth = 1;
+
+    @Builder.Default
+    private final int partitionHeight = 1;
+
     // methods
     public int rows() {
         return grid.length;
