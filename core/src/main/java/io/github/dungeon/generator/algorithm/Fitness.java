@@ -46,6 +46,8 @@ public final class Fitness {
         return (float)(entropy / maxEntropy);
     }
 
+
+
     // which part of the dungeon is on the main path from start to exit; should be ~50%
     private static float startToExitPathLen(DungeonTree tree) {
         List<DungeonTree> nodes = new ArrayList<>();
@@ -111,6 +113,25 @@ public final class Fitness {
         return gaussDistribution(diff, 0f, 0.2f);
     }
 
+    private static float difficultySimilarity(DungeonTree tree) {
+        List<DungeonTree> nodes = getAllNodes(tree).stream()
+                .filter(n -> !(n.getType() instanceof NodeTypes.Treasure))
+                .toList();
+
+        if (nodes.isEmpty()) return 0f;
+
+        float avgRisk = (float) nodes.stream().mapToDouble(n -> n.getType().getRisk()).average().orElse(0.0);
+
+        double sumSq = 0;
+        for (DungeonTree node : nodes) {
+            float diff = node.getType().getRisk() - avgRisk;
+            sumSq += diff * diff;
+        }
+        float stdev = (float) Math.sqrt(sumSq / nodes.size());
+
+        return gaussDistribution(stdev, 0.0f, 0.4f);
+    }
+
     // ------------------ controls ------------------
     // should have start and exit
     static float hasStartAndExitOnce(DungeonTree tree) {
@@ -170,7 +191,8 @@ public final class Fitness {
                 + startToExitPathLen(tree)
                 + nodesDiversity(tree)
                 + balanceValue(tree)
-        ) / 4;
+                + difficultySimilarity(tree)
+        ) / 5;
     }
 
     private static float control(DungeonTree tree) {

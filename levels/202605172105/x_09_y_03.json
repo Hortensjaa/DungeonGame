@@ -1,0 +1,170 @@
+{
+  "fitness" : 0.8500862,
+  "nodes" : [ {
+    "id" : 0,
+    "type" : "Start",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 5,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9877973,
+    "reward" : 0.9578518
+  }, {
+    "id" : 14,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.5246446,
+    "reward" : 0.99142
+  }, {
+    "id" : 1,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.86331797,
+    "reward" : 0.8302071
+  }, {
+    "id" : 13,
+    "type" : "Enemies",
+    "difficulty" : 0.929375,
+    "reward" : 0.0
+  }, {
+    "id" : 19,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.8531191,
+    "reward" : 0.96003217
+  }, {
+    "id" : 6,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9711763,
+    "reward" : 0.90901685
+  }, {
+    "id" : 7,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.9877973,
+    "reward" : 0.9578518
+  }, {
+    "id" : 10,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.7548482,
+    "reward" : 0.99787456
+  }, {
+    "id" : 17,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.7372922,
+    "reward" : 0.90021735
+  }, {
+    "id" : 9,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.93109417,
+    "reward" : 0.975099
+  }, {
+    "id" : 2,
+    "type" : "Enemies",
+    "difficulty" : 0.991003,
+    "reward" : 0.0
+  }, {
+    "id" : 3,
+    "type" : "Enemies",
+    "difficulty" : 0.96961683,
+    "reward" : 0.0
+  }, {
+    "id" : 8,
+    "type" : "Enemies",
+    "difficulty" : 0.68954486,
+    "reward" : 0.0
+  }, {
+    "id" : 11,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.88043785,
+    "reward" : 0.90502757
+  }, {
+    "id" : 4,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.6831035,
+    "reward" : 0.99561703
+  }, {
+    "id" : 12,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.92078054,
+    "reward" : 0.62631917
+  }, {
+    "id" : 16,
+    "type" : "Exit",
+    "difficulty" : 0.0,
+    "reward" : 0.0
+  }, {
+    "id" : 18,
+    "type" : "Treasure",
+    "difficulty" : 0.0,
+    "reward" : 0.99626315
+  }, {
+    "id" : 15,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.81748915,
+    "reward" : 0.924385
+  }, {
+    "id" : 20,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.8946585,
+    "reward" : 0.7808979
+  } ],
+  "edges" : [ {
+    "from" : 0,
+    "to" : 1
+  }, {
+    "from" : 0,
+    "to" : 2
+  }, {
+    "from" : 0,
+    "to" : 3
+  }, {
+    "from" : 5,
+    "to" : 6
+  }, {
+    "from" : 14,
+    "to" : 15
+  }, {
+    "from" : 13,
+    "to" : 14
+  }, {
+    "from" : 19,
+    "to" : 20
+  }, {
+    "from" : 6,
+    "to" : 7
+  }, {
+    "from" : 6,
+    "to" : 8
+  }, {
+    "from" : 7,
+    "to" : 9
+  }, {
+    "from" : 17,
+    "to" : 18
+  }, {
+    "from" : 9,
+    "to" : 12
+  }, {
+    "from" : 3,
+    "to" : 4
+  }, {
+    "from" : 3,
+    "to" : 5
+  }, {
+    "from" : 8,
+    "to" : 10
+  }, {
+    "from" : 8,
+    "to" : 11
+  }, {
+    "from" : 12,
+    "to" : 13
+  }, {
+    "from" : 16,
+    "to" : 17
+  }, {
+    "from" : 18,
+    "to" : 19
+  }, {
+    "from" : 15,
+    "to" : 16
+  } ]
+}

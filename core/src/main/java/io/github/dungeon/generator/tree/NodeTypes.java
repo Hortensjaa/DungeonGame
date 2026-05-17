@@ -9,8 +9,6 @@ public class NodeTypes {
     // todo: distinguish more types, like burning room, iron maidens room, potions lab etc. with its constraints.
     public static Base fromString(String type, float difficulty, float reward) {
         switch (type) {
-            case "Empty":
-                return new Empty();
             case "Start":
                 return new Start();
             case "Exit":
@@ -28,11 +26,9 @@ public class NodeTypes {
 
     public static Base getRandomRoom() {
         double r = Math.random();
-        if (r < 0.25) {
-            return new Empty();
-        } else if (r < 0.5) {
+        if (r < 0.35) {
             return new Enemies((float) (Math.random()));
-        } else if (r < 0.75) {
+        } else if (r < 0.65) {
             return new EnemyAndTreasure((float) (Math.random()), (float) (Math.random()));
         } else {
             return new Treasure((float) (Math.random()));
@@ -45,12 +41,6 @@ public class NodeTypes {
         float risk, reward;  // normalised [0,1]
         String name;
         String shortName;
-    }
-
-    public static class Empty extends Base {
-        Empty() {
-            super(0, 0, "Empty", ".");
-        }
     }
 
     public static class Start extends Base {

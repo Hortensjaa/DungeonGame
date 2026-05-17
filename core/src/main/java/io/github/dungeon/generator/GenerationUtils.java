@@ -81,6 +81,6 @@ public final class GenerationUtils {
 
     // -------- test --------
     public static void main(String[] args) {
-        GridDefinition gridDefinition = runSaveAndGenerate(1_000_000);
+        GridDefinition gridDefinition = runSaveAndGenerate(10_000_000);
     }
 }

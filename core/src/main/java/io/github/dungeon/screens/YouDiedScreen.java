@@ -25,7 +25,7 @@ public class YouDiedScreen implements Screen {
     private BitmapFont fontGenerator() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("skin/Jacquard12-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 200;
+        parameter.size = 180;
         BitmapFont font = generator.generateFont(parameter);
         generator.dispose();
         return font;

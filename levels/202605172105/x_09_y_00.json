@@ -1,0 +1,18 @@
+{
+  "fitness" : 0.0,
+  "nodes" : [ {
+    "id" : 0,
+    "type" : "EnemyAndTreasure",
+    "difficulty" : 0.999798,
+    "reward" : 0.9516283
+  }, {
+    "id" : 1,
+    "type" : "Enemies",
+    "difficulty" : 0.97423655,
+    "reward" : 0.0
+  } ],
+  "edges" : [ {
+    "from" : 0,
+    "to" : 1
+  } ]
+}

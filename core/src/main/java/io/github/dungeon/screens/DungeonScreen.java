@@ -28,7 +28,7 @@ public class DungeonScreen implements Screen, InputProcessor {
         GridDefinition def = null;
         while (def == null) {
             try {
-                def = GenerationUtils.generateGivenDifficulty("202604111244", gdxGame.getLevel());
+                def = GenerationUtils.generateGivenDifficulty("202605172105", gdxGame.getLevel());
             } catch (Exception e) {
                 System.out.println("Generation failed, retrying...");
             }
