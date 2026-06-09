@@ -1,6 +1,9 @@
-# Procedural Content Generation of Dungeons in Roguelike Games
+# Escape the dungeon
+Simple roguelike game, created to show possible application of custom dungeon generator created for my engineering thesis.
 
-## Overview and Goals
+## Procedural Content Generation of Dungeons in Roguelike Games
+
+### Overview and Goals
 
 Creating compelling levels in roguelike games is challenging, as they need to be:
 - **Diverse** — similar to random-based approaches (BSP, agent-based generation)
@@ -10,7 +13,7 @@ Creating compelling levels in roguelike games is challenging, as they need to be
 This project implements a hybrid procedural generation algorithm that addresses all these requirements 
 by combining MAP-Elites tree creation with rule-based grid mapping.
 
-## Hybrid Algorithm
+### Hybrid Algorithm
 
 The primary goal is to generate diverse levels quickly. The approach splits generation into two phases:
 1. **Tree structure generation** — creating the level's narrative "story"
@@ -37,7 +40,7 @@ In this example, the player starts at `S` (start) and must reach `X` (exit). How
 
 Each time the game is played, a tree from the `/levels` directory is selected (randomly or based on specific criteria) and mapped onto a layout.
 
-### Step 2: Layout Generation
+#### Step 2: Layout Generation
 
 In the second step, the selected tree is mapped onto a layout. A layout is an intermediate representation of the level, consisting of rooms as single grid cells and corridors as connections to parent rooms.
 
@@ -55,7 +58,7 @@ Importantly, a single tree can generate multiple distinct layouts:
 
 Layout generation uses a randomized backtracking algorithm that places rooms on the grid sequentially, starting from the tree's root. MAP-Elites trees are designed to always be easily mappable onto a grid.
 
-### Step 3: Grid Mapping
+#### Step 3: Grid Mapping
 
 The final step transforms the layout into a complete grid representation. Based on the trimmed layout (containing only rooms and corridors with margins removed), the grid space is partitioned to allocate equal space to each node. Each room is then generated using grammar-based rules, enabling varied room shapes and diverse placements of enemies and treasures.
 
@@ -64,7 +67,7 @@ The final step transforms the layout into a complete grid representation. Based 
   <figcaption><em>Figure 4: Grid generated from the layout in Figure 2</em></figcaption>
 </figure>
 
-## Potential Applications
+### Potential Applications
 
 After testing this algorithm on the CodinGame platform, the next step is to explore its integration into a standalone game. 
 Roguelike games are ideal for procedural generation, as they typically require numerous sequential levels. Additionally, 
@@ -75,7 +78,7 @@ dungeons per run, approximately 20 trees can be allocated per difficulty level.
 Each tree can then be mapped to a grid with added randomness. This approach ensures high probability of unique 
 runs — statistically, about 80% of levels will have a different parent tree compared to the previous session.
 
-## Statistics and Results
+### Statistics and Results
 
 Detailed statistics and analysis can be found in the [results notebook](results.ipynb).
 
