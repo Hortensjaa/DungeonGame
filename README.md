@@ -79,9 +79,3 @@ runs — statistically, about 80% of levels will have a different parent tree co
 
 Detailed statistics and analysis can be found in the [results notebook](results.ipynb).
 
-### Game todos:
-- [ ] dodge
-- [ ] golem sprite fix
-- [ ] damage cooldown
-- [ ] sound effects
-- [ ] up/down animations
